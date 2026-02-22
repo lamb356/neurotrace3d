@@ -23,24 +23,33 @@
 - [x] pnpm typecheck — no TypeScript errors
 - [x] pnpm test — all 32 tests pass
 
-## Week 2: Neuron Tree + Viewer Shell
+## Weeks 2-3: Core 3D Viewer
 
-- [ ] @neurotrace/neuron-tree package
-- [ ] NeuronTree class with spatial indexing
-- [ ] Web app shell with React + Three.js
-- [ ] Basic 3D line rendering of SWC morphologies
-- [ ] Camera controls and viewport setup
-
-## Week 3: Interactive Editing
-
-- [ ] Node selection and highlighting
-- [ ] Edit operations (add, delete, move nodes)
-- [ ] Undo/redo system
-- [ ] File import/export UI
+- [x] Next.js 16 app shell with Tailwind CSS 4 (App Router, Turbopack)
+- [x] TypeScript strict, workspace dep on @neurotrace/swc-parser
+- [x] Three.js + R3F + drei integration
+- [x] NeuronRenderer: InstancedMesh (nodes) + LineSegments (edges)
+- [x] Color-coded by SWC type (soma/axon/basal/apical)
+- [x] CameraControls: OrbitControls with damping, auto-fit on load
+- [x] ViewerContainer: flex layout with canvas + side panel
+- [x] Dynamic import with SSR disabled for Three.js components
+- [x] FileUpload: drag-and-drop + click-to-browse (.swc files)
+- [x] useNeuronData hook: parseSWC → computeStats → validateSWC pipeline
+- [x] StatsPanel: total nodes, length, branch points, tips, by-type counts
+- [x] WarningsPanel: collapsible warning list with type/message
+- [x] MetadataPanel: species, region, cell type from SWC comments
+- [x] Hover highlight (yellow), click select (orange), shift+click multi-select
+- [x] Double-click to center camera on node (smooth lerp)
+- [x] Escape to clear selection
+- [x] NodeInfoPanel: selected node details (ID, type, coords, radius, parent, children)
+- [x] useNeuronSelection hook: hover/select/focus state management
+- [x] 3 sample SWC files: simple (50), medium (200), large (10K nodes)
+- [x] All samples parse with 0 warnings
+- [x] pnpm build — production build succeeds
+- [x] pnpm typecheck — no TypeScript errors
 
 ## Week 4: Polish + Deploy
 
 - [ ] Performance optimization for large morphologies
-- [ ] Color coding by neurite type
 - [ ] Measurement tools
 - [ ] Documentation and deployment
