@@ -29,7 +29,12 @@ describe('validateSWC', () => {
     const result = parseSWC(input);
 
     // Manually inject a back-edge: 3 -> 1, creating cycle 1 -> 2 -> 3 -> 1
-    result.childIndex.get(3)!.push(1);
+    const children3 = result.childIndex.get(3);
+    if (children3) {
+      children3.push(1);
+    } else {
+      result.childIndex.set(3, [1]);
+    }
 
     const warnings = validateSWC(result);
 

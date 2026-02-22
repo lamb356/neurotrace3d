@@ -11,7 +11,7 @@ describe('edge cases', () => {
 
     const warning = result.warnings.find((w) => w.type === 'MALFORMED_LINE');
     expect(warning).toBeDefined();
-    expect(warning!.message).toContain('5');
+    expect(warning!.message).toContain('Malformed');
     expect(result.nodes.size).toBe(0);
   });
 
@@ -22,7 +22,7 @@ describe('edge cases', () => {
 
     const warning = result.warnings.find((w) => w.type === 'MALFORMED_LINE');
     expect(warning).toBeDefined();
-    expect(warning!.message).toContain('Non-numeric');
+    expect(warning!.message).toContain('Malformed');
     expect(result.nodes.size).toBe(0);
   });
 

@@ -1,5 +1,48 @@
 import type { SWCNode, SWCParseResult, ParseWarning, SWCMetadata } from "./types.js";
-import { normalizeContent, normalizeLine, extractMetadata } from "./utils.js";
+import { extractMetadata } from "./utils.js";
+
+// Char codes
+const CH_SPACE = 32;
+const CH_TAB = 9;
+const CH_LF = 10;
+const CH_CR = 13;
+const CH_HASH = 35;
+
+/**
+ * Parse 7 space-separated numeric fields from content[start..end).
+ * Returns a 7-element array or null on malformed input.
+ */
+function parseDataLine(
+  s: string,
+  start: number,
+  end: number,
+): number[] | null {
+  const values: number[] = [];
+  let i = start;
+
+  while (i < end) {
+    while (i < end && (s.charCodeAt(i) === CH_SPACE || s.charCodeAt(i) === CH_TAB)) i++;
+    if (i >= end) break;
+
+    let j = i;
+    while (j < end && s.charCodeAt(j) !== CH_SPACE && s.charCodeAt(j) !== CH_TAB) j++;
+
+    values.push(+s.substring(i, j));
+    i = j;
+  }
+
+  if (values.length !== 7) return null;
+
+  if (
+    values[0] !== values[0] || values[1] !== values[1] || values[2] !== values[2] ||
+    values[3] !== values[3] || values[4] !== values[4] || values[5] !== values[5] ||
+    values[6] !== values[6]
+  ) {
+    return null;
+  }
+
+  return values;
+}
 
 /**
  * Parse an SWC-format string into a structured result.
@@ -15,52 +58,76 @@ export function parseSWC(content: string): SWCParseResult {
   const metadata: SWCMetadata = {};
   const warnings: ParseWarning[] = [];
 
-  if (!content || content.trim().length === 0) {
+  if (!content) {
     return { nodes, roots, childIndex, comments, metadata, warnings };
   }
 
-  const normalized = normalizeContent(content);
-  const lines = normalized.split("\n");
+  const len = content.length;
+  let lineStart = 0;
+  let lineNum = 0;
 
-  // Pass 1: parse all lines
-  for (let i = 0; i < lines.length; i++) {
-    const lineNum = i + 1;
-    const raw = normalizeLine(lines[i]);
+  let prevId = -Infinity;
+  let isSequential = true;
+  let hasSoma = false;
 
-    if (raw.length === 0) continue;
+  while (lineStart <= len) {
+    lineNum++;
 
-    if (raw.startsWith("#")) {
-      comments.push(raw);
-      extractMetadata(raw, metadata);
+    // Find end of line
+    let lineEnd = lineStart;
+    while (lineEnd < len && content.charCodeAt(lineEnd) !== CH_LF) lineEnd++;
+
+    // Trim trailing \r
+    let trimEnd = lineEnd;
+    if (trimEnd > lineStart && content.charCodeAt(trimEnd - 1) === CH_CR) trimEnd--;
+
+    // Skip leading whitespace
+    let trimStart = lineStart;
+    while (trimStart < trimEnd) {
+      const c = content.charCodeAt(trimStart);
+      if (c !== CH_SPACE && c !== CH_TAB) break;
+      trimStart++;
+    }
+    // Trim trailing whitespace
+    while (trimEnd > trimStart) {
+      const c = content.charCodeAt(trimEnd - 1);
+      if (c !== CH_SPACE && c !== CH_TAB) break;
+      trimEnd--;
+    }
+
+    if (trimStart >= trimEnd) {
+      lineStart = lineEnd + 1;
       continue;
     }
 
-    const parts = raw.split(/\s+/);
-    if (parts.length !== 7) {
+    // Comment line
+    if (content.charCodeAt(trimStart) === CH_HASH) {
+      const commentStr = content.substring(trimStart, trimEnd);
+      comments.push(commentStr);
+      extractMetadata(commentStr, metadata);
+      lineStart = lineEnd + 1;
+      continue;
+    }
+
+    // Data line
+    const parsed = parseDataLine(content, trimStart, trimEnd);
+    if (!parsed) {
       warnings.push({
         type: "MALFORMED_LINE",
-        message: `Expected 7 columns, got ${parts.length}`,
+        message: "Malformed data line",
         line: lineNum,
       });
+      lineStart = lineEnd + 1;
       continue;
     }
 
-    const id = Number(parts[0]);
-    const type = Number(parts[1]);
-    const x = Number(parts[2]);
-    const y = Number(parts[3]);
-    const z = Number(parts[4]);
-    const radius = Number(parts[5]);
-    const parentId = Number(parts[6]);
-
-    if ([id, type, x, y, z, radius, parentId].some((v) => Number.isNaN(v))) {
-      warnings.push({
-        type: "MALFORMED_LINE",
-        message: "Non-numeric value in data line",
-        line: lineNum,
-      });
-      continue;
-    }
+    const id = parsed[0] | 0;
+    const type = parsed[1] | 0;
+    const x = parsed[2];
+    const y = parsed[3];
+    const z = parsed[4];
+    const radius = parsed[5];
+    const parentId = parsed[6] | 0;
 
     if (nodes.has(id)) {
       warnings.push({
@@ -69,6 +136,7 @@ export function parseSWC(content: string): SWCParseResult {
         line: lineNum,
         nodeId: id,
       });
+      lineStart = lineEnd + 1;
       continue;
     }
 
@@ -90,19 +158,29 @@ export function parseSWC(content: string): SWCParseResult {
       });
     }
 
+    if (type === 1) hasSoma = true;
+
+    if (isSequential && prevId !== -Infinity && id !== prevId + 1) {
+      isSequential = false;
+    }
+    prevId = id;
+
     nodes.set(id, { id, type, x, y, z, radius, parentId });
+
+    lineStart = lineEnd + 1;
   }
 
-  // Pass 2: build tree structure
-  for (const [id, node] of nodes) {
-    childIndex.set(id, []);
-  }
-
+  // Build tree structure — allocate childIndex arrays only as needed
   for (const [id, node] of nodes) {
     if (node.parentId === -1) {
       roots.push(id);
     } else if (nodes.has(node.parentId)) {
-      childIndex.get(node.parentId)!.push(id);
+      const children = childIndex.get(node.parentId);
+      if (children) {
+        children.push(id);
+      } else {
+        childIndex.set(node.parentId, [id]);
+      }
     } else {
       warnings.push({
         type: "INVALID_PARENT",
@@ -116,7 +194,6 @@ export function parseSWC(content: string): SWCParseResult {
 
   // Post-parse checks
   if (roots.length === 0 && nodes.size > 0) {
-    // No roots found — pick lowest ID as root
     let minId = Infinity;
     for (const id of nodes.keys()) {
       if (id < minId) minId = id;
@@ -131,32 +208,13 @@ export function parseSWC(content: string): SWCParseResult {
     roots.push(minId);
   }
 
-  // Check for non-sequential IDs
-  if (nodes.size > 1) {
-    const ids = Array.from(nodes.keys()).sort((a, b) => a - b);
-    let sequential = true;
-    for (let i = 1; i < ids.length; i++) {
-      if (ids[i] !== ids[i - 1] + 1) {
-        sequential = false;
-        break;
-      }
-    }
-    if (!sequential) {
-      warnings.push({
-        type: "NON_SEQUENTIAL_IDS",
-        message: "Node IDs are not sequential",
-      });
-    }
+  if (!isSequential && nodes.size > 1) {
+    warnings.push({
+      type: "NON_SEQUENTIAL_IDS",
+      message: "Node IDs are not sequential",
+    });
   }
 
-  // Check for missing soma
-  let hasSoma = false;
-  for (const node of nodes.values()) {
-    if (node.type === 1) {
-      hasSoma = true;
-      break;
-    }
-  }
   if (!hasSoma && nodes.size > 0) {
     warnings.push({
       type: "MISSING_SOMA",
