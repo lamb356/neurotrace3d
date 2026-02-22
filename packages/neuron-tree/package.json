@@ -1,0 +1,10 @@
+{
+  "name": "@neurotrace/neuron-tree",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "echo 'neuron-tree: stub'",
+    "test": "echo 'neuron-tree: no tests'",
+    "typecheck": "echo 'neuron-tree: no types'"
+  }
+}
