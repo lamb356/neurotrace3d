@@ -67,6 +67,12 @@ export default function NeuronRenderer() {
       return;
     }
 
+    // Path select: accumulate two nodes, then BFS path
+    if (store.activeTool === "path-select") {
+      store.addPathSelectPending(nodeId, shiftKey);
+      return;
+    }
+
     // Select/other tools: normal selection
     if (shiftKey) {
       store.toggleSelection(nodeId);

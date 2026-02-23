@@ -59,6 +59,59 @@ export function pathDistance(
   return null;
 }
 
+/**
+ * BFS to find the path between two nodes via tree edges (undirected).
+ * Returns an ordered array of node IDs from idA to idB, or null if no path exists.
+ */
+export function findPath(
+  tree: Map<number, SWCNode>,
+  childIndex: Map<number, number[]>,
+  idA: number,
+  idB: number,
+): number[] | null {
+  if (idA === idB) return [idA];
+
+  // Build undirected adjacency
+  const adj = new Map<number, number[]>();
+  for (const [id, node] of tree) {
+    if (!adj.has(id)) adj.set(id, []);
+    if (node.parentId !== -1 && tree.has(node.parentId)) {
+      adj.get(id)!.push(node.parentId);
+      if (!adj.has(node.parentId)) adj.set(node.parentId, []);
+      adj.get(node.parentId)!.push(id);
+    }
+  }
+
+  const visited = new Set<number>([idA]);
+  const prev = new Map<number, number>();
+  const queue: number[] = [idA];
+
+  while (queue.length > 0) {
+    const cur = queue.shift()!;
+    if (cur === idB) {
+      // Trace back to build path
+      const path: number[] = [];
+      let nodeId = idB;
+      while (nodeId !== idA) {
+        path.push(nodeId);
+        nodeId = prev.get(nodeId)!;
+      }
+      path.push(idA);
+      path.reverse();
+      return path;
+    }
+    for (const neighbor of adj.get(cur) ?? []) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        prev.set(neighbor, cur);
+        queue.push(neighbor);
+      }
+    }
+  }
+
+  return null;
+}
+
 /** Angle at node B between vectors BA and BC, in degrees */
 export function branchAngle(a: SWCNode, b: SWCNode, c: SWCNode): number {
   const bax = a.x - b.x, bay = a.y - b.y, baz = a.z - b.z;

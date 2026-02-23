@@ -12,7 +12,7 @@ import {
   createRetypeOps,
   createReparentOps,
 } from "./editActions";
-import { euclideanDistance, pathDistance, branchAngle } from "@/lib/measurements";
+import { euclideanDistance, pathDistance, branchAngle, findPath } from "@/lib/measurements";
 
 const MAX_HISTORY = 100;
 
@@ -310,6 +310,30 @@ export const useNeuronStore = create<NeuronStore>()(
     removeMeasurement(index: number) {
       set((state) => {
         state.measurements.splice(index, 1);
+      });
+    },
+
+    addPathSelectPending(id: number, shiftKey: boolean) {
+      set((state) => {
+        // Deduplicate consecutive identical IDs
+        if (state.measurePending.length > 0 && state.measurePending[state.measurePending.length - 1] === id) return;
+        state.measurePending.push(id);
+
+        if (state.measurePending.length >= 2) {
+          const [idA, idB] = state.measurePending;
+          const path = findPath(state.tree, state.childIndex, idA, idB);
+          state.measurePending = [];
+
+          if (path && path.length > 0) {
+            if (shiftKey) {
+              for (const nodeId of path) state.selection.add(nodeId);
+            } else {
+              state.selection = new Set(path);
+            }
+          } else if (!shiftKey) {
+            state.selection = new Set();
+          }
+        }
       });
     },
 

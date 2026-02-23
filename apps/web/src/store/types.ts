@@ -34,7 +34,7 @@ export interface NeuronState {
   future: TreeOp[][];
 
   // Tool
-  activeTool: "select" | "move" | "insert" | "delete" | "measure-distance" | "measure-angle";
+  activeTool: "select" | "move" | "insert" | "delete" | "measure-distance" | "measure-angle" | "box-select" | "path-select";
 
   // Measurements
   measurements: Measurement[];
@@ -87,6 +87,9 @@ export interface NeuronActions {
   addMeasurePending(id: number): void;
   clearMeasurements(): void;
   removeMeasurement(index: number): void;
+
+  // Path select
+  addPathSelectPending(id: number, shiftKey: boolean): void;
 
   // Sholl
   setShowShollSpheres(show: boolean): void;

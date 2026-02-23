@@ -114,6 +114,14 @@ export default function Home() {
           useNeuronStore.getState().setActiveTool("measure-angle");
           return;
         }
+        if (key === "b") {
+          useNeuronStore.getState().setActiveTool("box-select");
+          return;
+        }
+        if (key === "p") {
+          useNeuronStore.getState().setActiveTool("path-select");
+          return;
+        }
       }
     };
     window.addEventListener("keydown", handler);

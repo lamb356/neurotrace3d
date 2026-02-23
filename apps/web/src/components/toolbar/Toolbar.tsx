@@ -12,6 +12,8 @@ const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[
   { id: "delete", label: "Delete", shortcut: "X" },
   { id: "measure-distance", label: "Distance", shortcut: "D" },
   { id: "measure-angle", label: "Angle", shortcut: "A" },
+  { id: "box-select", label: "Box", shortcut: "B" },
+  { id: "path-select", label: "Path", shortcut: "P" },
 ];
 
 export default function Toolbar() {
