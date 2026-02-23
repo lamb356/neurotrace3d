@@ -55,6 +55,22 @@ export default function NeuronRenderer() {
     if (nodeId === undefined) return;
     const store = useNeuronStore.getState();
 
+    // Insert tool: split edge by inserting node at midpoint
+    if (store.activeTool === "insert") {
+      const node = store.tree.get(nodeId);
+      if (node && node.parentId !== -1) {
+        const parent = store.tree.get(node.parentId);
+        if (parent) {
+          store.insertNode(node.parentId, nodeId, {
+            x: (parent.x + node.x) / 2,
+            y: (parent.y + node.y) / 2,
+            z: (parent.z + node.z) / 2,
+          });
+        }
+      }
+      return;
+    }
+
     // Delete tool: click to delete
     if (store.activeTool === "delete") {
       store.deleteNodes([nodeId]);
