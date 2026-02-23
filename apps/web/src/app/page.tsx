@@ -11,6 +11,7 @@ import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
 import Toolbar from "@/components/toolbar/Toolbar";
 import ContextMenu from "@/components/viewer/ContextMenu";
 import NeuromorphoBrowser from "@/components/neuromorpho/NeuromorphoBrowser";
+import FeaturedNeurons from "@/components/neuromorpho/FeaturedNeurons";
 import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
@@ -131,6 +132,7 @@ export default function Home() {
           <p className="text-sm text-red-400">{error}</p>
         )}
         <SampleLoader />
+        <FeaturedNeurons />
       </main>
     );
   }

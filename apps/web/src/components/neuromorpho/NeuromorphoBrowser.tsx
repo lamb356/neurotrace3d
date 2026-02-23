@@ -50,16 +50,22 @@ export default function NeuromorphoBrowser({
       setLoading(true);
       setError(null);
       try {
-        // Build NeuroMorpho query string
-        const parts: string[] = [];
-        if (query.trim()) parts.push(query.trim());
-        if (filters.species) parts.push(`species:${filters.species}`);
-        if (filters.brain_region) parts.push(`brain_region:${filters.brain_region}`);
-        if (filters.cell_type) parts.push(`cell_type:${filters.cell_type}`);
-
-        const q = parts.join(" ");
+        // Build NeuroMorpho query: first field/text goes to q, rest to fq
         const params = new URLSearchParams({ page: String(pageNum), size: "20" });
-        if (q) params.set("q", q);
+        const filterParts: string[] = [];
+        if (filters.species) filterParts.push(`species:${filters.species}`);
+        if (filters.brain_region) filterParts.push(`brain_region:${filters.brain_region}`);
+        if (filters.cell_type) filterParts.push(`cell_type:${filters.cell_type}`);
+
+        if (query.trim()) {
+          // Text query goes as q, filters as fq
+          params.set("q", query.trim());
+          for (const f of filterParts) params.append("fq", f);
+        } else if (filterParts.length > 0) {
+          // No text query: first filter as q, rest as fq
+          params.set("q", filterParts[0]);
+          for (let i = 1; i < filterParts.length; i++) params.append("fq", filterParts[i]);
+        }
 
         const res = await fetch(`/api/neuromorpho/search?${params}`);
         if (!res.ok) {
