@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import FileUpload from "@/components/upload/FileUpload";
 import ViewerContainer from "@/components/viewer/ViewerContainer";
@@ -8,6 +8,8 @@ import StatsPanel from "@/components/panels/StatsPanel";
 import WarningsPanel from "@/components/panels/WarningsPanel";
 import MetadataPanel from "@/components/panels/MetadataPanel";
 import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
+import Toolbar from "@/components/toolbar/Toolbar";
+import ContextMenu from "@/components/viewer/ContextMenu";
 import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
@@ -19,10 +21,17 @@ const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
   ),
 });
 
+interface ContextMenuState {
+  nodeId: number;
+  x: number;
+  y: number;
+}
+
 export default function Home() {
   const hasData = useNeuronStore((s) => s.tree.size > 0);
   const error = useNeuronStore((s) => s.error);
   const clearSelection = useNeuronStore((s) => s.clearSelection);
+  const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -31,6 +40,10 @@ export default function Home() {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
       if (e.key === "Escape") {
+        if (contextMenu) {
+          setContextMenu(null);
+          return;
+        }
         clearSelection();
         return;
       }
@@ -58,10 +71,41 @@ export default function Home() {
         }
         return;
       }
+
+      // Tool shortcuts (only when no modifier keys)
+      if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+        const key = e.key.toLowerCase();
+        if (key === "v") {
+          useNeuronStore.getState().setActiveTool("select");
+          return;
+        }
+        if (key === "m") {
+          useNeuronStore.getState().setActiveTool("move");
+          return;
+        }
+        if (key === "i") {
+          useNeuronStore.getState().setActiveTool("insert");
+          return;
+        }
+        if (key === "x") {
+          useNeuronStore.getState().setActiveTool("delete");
+          return;
+        }
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [clearSelection]);
+  }, [clearSelection, contextMenu]);
+
+  // Listen for custom context menu events dispatched from NeuronRenderer
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as ContextMenuState;
+      setContextMenu(detail);
+    };
+    window.addEventListener("neuron-context-menu", handler);
+    return () => window.removeEventListener("neuron-context-menu", handler);
+  }, []);
 
   if (!hasData) {
     return (
@@ -80,23 +124,34 @@ export default function Home() {
   }
 
   return (
-    <ViewerContainer
-      canvas={<NeuronCanvas />}
-      panels={
-        <>
-          <FileUpload />
-          {error && (
-            <div className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-          <StatsPanel />
-          <MetadataPanel />
-          <NodeInfoPanel />
-          <WarningsPanel />
-        </>
-      }
-    />
+    <>
+      <ViewerContainer
+        toolbar={<Toolbar />}
+        canvas={<NeuronCanvas />}
+        panels={
+          <>
+            <FileUpload />
+            {error && (
+              <div className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+                {error}
+              </div>
+            )}
+            <StatsPanel />
+            <MetadataPanel />
+            <NodeInfoPanel />
+            <WarningsPanel />
+          </>
+        }
+      />
+      {contextMenu && (
+        <ContextMenu
+          nodeId={contextMenu.nodeId}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
+    </>
   );
 }
 

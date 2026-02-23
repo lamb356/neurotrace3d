@@ -54,6 +54,14 @@ export default function NeuronRenderer() {
     const nodeId = mapping.instanceToNodeId[instanceId];
     if (nodeId === undefined) return;
     const store = useNeuronStore.getState();
+
+    // Delete tool: click to delete
+    if (store.activeTool === "delete") {
+      store.deleteNodes([nodeId]);
+      return;
+    }
+
+    // Select/other tools: normal selection
     if (shiftKey) {
       store.toggleSelection(nodeId);
     } else {
@@ -178,6 +186,21 @@ export default function NeuronRenderer() {
           e.stopPropagation();
           if (e.instanceId !== undefined) {
             handleDoubleClick(e.instanceId);
+          }
+        }}
+        onContextMenu={(e) => {
+          e.stopPropagation();
+          if (e.instanceId !== undefined) {
+            const nodeId = mapping.instanceToNodeId[e.instanceId];
+            if (nodeId !== undefined) {
+              const nativeEvent = e.nativeEvent as MouseEvent;
+              nativeEvent.preventDefault();
+              window.dispatchEvent(
+                new CustomEvent("neuron-context-menu", {
+                  detail: { nodeId, x: nativeEvent.clientX, y: nativeEvent.clientY },
+                }),
+              );
+            }
           }
         }}
       />

@@ -28,6 +28,9 @@ export interface NeuronState {
   history: TreeOp[][];
   future: TreeOp[][];
 
+  // Tool
+  activeTool: "select" | "move" | "insert" | "delete";
+
   // UI
   loading: boolean;
   error: string | null;
@@ -60,6 +63,7 @@ export interface NeuronActions {
   retypeNodes(ids: number[], newType: number): void;
   reparentNode(id: number, newParentId: number): void;
   selectSubtree(rootId: number): void;
+  setActiveTool(tool: NeuronState["activeTool"]): void;
 }
 
 export type NeuronStore = NeuronState & NeuronActions;

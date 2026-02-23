@@ -4,9 +4,11 @@ import { Canvas } from "@react-three/fiber";
 import { useNeuronStore } from "@/store/useNeuronStore";
 import NeuronRenderer from "./NeuronRenderer";
 import CameraControls from "./CameraControls";
+import NodeDragger from "./NodeDragger";
 
 export default function NeuronCanvas() {
   const hasNodes = useNeuronStore((s) => s.tree.size > 0);
+  const activeTool = useNeuronStore((s) => s.activeTool);
   const clearHover = useNeuronStore((s) => s.setHovered);
 
   return (
@@ -20,6 +22,7 @@ export default function NeuronCanvas() {
       <directionalLight position={[10, 10, 10]} intensity={0.8} />
       <CameraControls />
       {hasNodes && <NeuronRenderer />}
+      {hasNodes && activeTool === "move" && <NodeDragger />}
     </Canvas>
   );
 }

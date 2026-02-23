@@ -31,6 +31,7 @@ const initialState = {
   focusTarget: null,
   history: [],
   future: [],
+  activeTool: "select" as const,
   loading: false,
   error: null,
 };
@@ -211,6 +212,12 @@ export const useNeuronStore = create<NeuronStore>()(
           }
         }
         state.selection = ids;
+      });
+    },
+
+    setActiveTool(tool) {
+      set((state) => {
+        state.activeTool = tool;
       });
     },
   })),
