@@ -11,9 +11,9 @@
 - [x] 3. Dark/light mode toggle
 
 ## Medium (1-2 hours each)
-- [ ] 4. Measurement tools (distance between nodes, branch angle)
-- [ ] 5. Sholl analysis (concentric spheres, intersection chart, CSV export)
-- [ ] 6. Validation warnings panel (clickable, flies camera to problem node)
+- [x] 4. Measurement tools (distance between nodes, branch angle)
+- [x] 5. Sholl analysis (concentric spheres, intersection chart, CSV export)
+- [x] 6. Validation warnings panel (clickable, flies camera to problem node)
 - [ ] 7. Box selection tool (drag rectangle, frustum select)
 - [ ] 8. Path selection tool (click two nodes, select path between)
 - [ ] 9. Branch split
