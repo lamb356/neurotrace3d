@@ -33,6 +33,7 @@ export default function Toolbar() {
   const selectionCount = useNeuronStore((s) => s.selection.size);
   const measureCount = useNeuronStore((s) => s.measurements.length);
   const cameraMode = useNeuronStore((s) => s.cameraMode);
+  const showMinimap = useNeuronStore((s) => s.showMinimap);
 
   const handleUndo = () => useNeuronStore.getState().undo();
   const handleRedo = () => useNeuronStore.getState().redo();
@@ -108,6 +109,19 @@ export default function Toolbar() {
         title="Save PNG screenshot"
       >
         Screenshot
+      </button>
+
+      {/* Minimap toggle */}
+      <button
+        className={`rounded px-2 py-1 text-xs transition-colors ${
+          showMinimap
+            ? "bg-accent text-white"
+            : "text-text-muted hover:bg-surface-hover hover:text-text"
+        }`}
+        onClick={() => useNeuronStore.getState().setShowMinimap(!showMinimap)}
+        title="Toggle minimap"
+      >
+        Minimap
       </button>
 
       <div className="bg-border mx-2 h-5 w-px" />

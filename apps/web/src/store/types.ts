@@ -55,6 +55,9 @@ export interface NeuronState {
   showShollSpheres: boolean;
   shollRadiusStep: number;
 
+  // Minimap
+  showMinimap: boolean;
+
   // UI
   loading: boolean;
   error: string | null;
@@ -108,6 +111,9 @@ export interface NeuronActions {
 
   // Path select
   addPathSelectPending(id: number, shiftKey: boolean): void;
+
+  // Minimap
+  setShowMinimap(show: boolean): void;
 
   // Sholl
   setShowShollSpheres(show: boolean): void;

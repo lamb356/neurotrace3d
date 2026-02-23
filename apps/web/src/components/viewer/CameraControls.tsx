@@ -9,6 +9,7 @@ import {
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, Box3 } from "three";
 import { useNeuronStore } from "@/store/useNeuronStore";
+import { mainCameraRef } from "@/lib/mainCameraRef";
 
 export default function CameraControls() {
   const tree = useNeuronStore((s) => s.tree);
@@ -26,6 +27,12 @@ export default function CameraControls() {
   const lerpProgress = useRef(0);
 
   const isPerspective = cameraMode === "perspective";
+
+  // Expose main camera for minimap
+  useEffect(() => {
+    mainCameraRef.current = camera;
+    return () => { mainCameraRef.current = null; };
+  }, [camera]);
 
   // Compute bounding box from tree
   const bbox = useMemo(() => {
@@ -191,7 +198,10 @@ export default function CameraControls() {
         dampingFactor={0.1}
         makeDefault
         enableRotate={isPerspective}
-        onChange={() => invalidate()}
+        onChange={() => {
+          invalidate();
+          window.dispatchEvent(new Event("main-camera-moved"));
+        }}
       />
     </>
   );

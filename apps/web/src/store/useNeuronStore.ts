@@ -42,6 +42,7 @@ const initialState = {
   measurePending: [] as number[],
   source: null,
   neuromorphoMeta: null,
+  showMinimap: false,
   showShollSpheres: false,
   shollRadiusStep: 10,
   loading: false,
@@ -409,6 +410,12 @@ export const useNeuronStore = create<NeuronStore>()(
             state.selection = new Set();
           }
         }
+      });
+    },
+
+    setShowMinimap(show: boolean) {
+      set((state) => {
+        state.showMinimap = show;
       });
     },
 

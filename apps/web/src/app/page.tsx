@@ -14,6 +14,7 @@ import Toolbar from "@/components/toolbar/Toolbar";
 import ContextMenu from "@/components/viewer/ContextMenu";
 import NeuromorphoBrowser from "@/components/neuromorpho/NeuromorphoBrowser";
 import FeaturedNeurons from "@/components/neuromorpho/FeaturedNeurons";
+import Minimap from "@/components/viewer/Minimap";
 import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
@@ -235,7 +236,7 @@ export default function Home() {
     <>
       <ViewerContainer
         toolbar={<Toolbar />}
-        canvas={<NeuronCanvas />}
+        canvas={<><NeuronCanvas /><Minimap /></>}
         panels={
           <>
             {/* Sidebar tab toggle */}
