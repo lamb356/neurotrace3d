@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:smoke": "tsx scripts/smoke-test.ts"
   },
   "dependencies": {
     "@neurotrace/swc-parser": "workspace:*",
@@ -28,6 +29,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.183.1",
     "tailwindcss": "^4.2.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }
