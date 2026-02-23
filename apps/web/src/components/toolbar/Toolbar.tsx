@@ -3,6 +3,7 @@
 import { useNeuronStore } from "@/store/useNeuronStore";
 import { exportSWC } from "@/lib/exportSWC";
 import type { NeuronState } from "@/store/types";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[] = [
   { id: "select", label: "Select", shortcut: "V" },
@@ -75,6 +76,20 @@ export default function Toolbar() {
       >
         Export
       </button>
+
+      {/* Screenshot */}
+      <button
+        className="text-text-muted hover:bg-surface-hover hover:text-text rounded px-2 py-1 text-xs transition-colors"
+        onClick={() => window.dispatchEvent(new CustomEvent("take-screenshot"))}
+        title="Save PNG screenshot"
+      >
+        Screenshot
+      </button>
+
+      <div className="bg-border mx-2 h-5 w-px" />
+
+      {/* Theme Toggle */}
+      <ThemeToggle />
 
       {/* Spacer */}
       <div className="flex-1" />
