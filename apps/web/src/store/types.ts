@@ -5,6 +5,7 @@ import type {
   MorphologyStats,
 } from "@neurotrace/swc-parser";
 import type { TreeOp } from "./operations";
+import type { NeuromorphoNeuron } from "@/lib/neuromorpho-types";
 
 export interface NeuronState {
   // Tree data
@@ -31,6 +32,10 @@ export interface NeuronState {
   // Tool
   activeTool: "select" | "move" | "insert" | "delete";
 
+  // Source
+  source: "local" | "neuromorpho" | null;
+  neuromorphoMeta: NeuromorphoNeuron | null;
+
   // UI
   loading: boolean;
   error: string | null;
@@ -39,6 +44,7 @@ export interface NeuronState {
 export interface NeuronActions {
   loadSWC(content: string, fileName: string): void;
   loadFile(file: File): void;
+  loadFromNeuromorpho(name: string): Promise<void>;
 
   // Selection
   selectNode(id: number): void;

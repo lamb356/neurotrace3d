@@ -32,6 +32,8 @@ const initialState = {
   history: [],
   future: [],
   activeTool: "select" as const,
+  source: null,
+  neuromorphoMeta: null,
   loading: false,
   error: null,
 };
@@ -60,6 +62,8 @@ export const useNeuronStore = create<NeuronStore>()(
           state.focusTarget = null;
           state.history = [];
           state.future = [];
+          state.source = "local";
+          state.neuromorphoMeta = null;
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -87,6 +91,33 @@ export const useNeuronStore = create<NeuronStore>()(
         });
       };
       reader.readAsText(file);
+    },
+
+    async loadFromNeuromorpho(name: string) {
+      set((state) => {
+        state.loading = true;
+        state.error = null;
+      });
+      try {
+        const swcRes = await fetch(`/api/neuromorpho/swc/${encodeURIComponent(name)}`);
+        if (!swcRes.ok) throw new Error(`Failed to load SWC: ${swcRes.statusText}`);
+        const swcText = await swcRes.text();
+
+        const metaRes = await fetch(`/api/neuromorpho/neuron/${encodeURIComponent(name)}`);
+        const meta = metaRes.ok ? await metaRes.json() : null;
+
+        useNeuronStore.getState().loadSWC(swcText, name + ".swc");
+
+        set((state) => {
+          state.neuromorphoMeta = meta;
+          state.source = "neuromorpho";
+        });
+      } catch (err) {
+        set((state) => {
+          state.loading = false;
+          state.error = err instanceof Error ? err.message : "Failed to load from NeuroMorpho";
+        });
+      }
     },
 
     selectNode(id: number) {

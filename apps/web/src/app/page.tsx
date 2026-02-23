@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import FileUpload from "@/components/upload/FileUpload";
 import ViewerContainer from "@/components/viewer/ViewerContainer";
@@ -10,6 +10,7 @@ import MetadataPanel from "@/components/panels/MetadataPanel";
 import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
 import Toolbar from "@/components/toolbar/Toolbar";
 import ContextMenu from "@/components/viewer/ContextMenu";
+import NeuromorphoBrowser from "@/components/neuromorpho/NeuromorphoBrowser";
 import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
@@ -27,17 +28,28 @@ interface ContextMenuState {
   y: number;
 }
 
+type SidebarTab = "upload" | "browse";
+
 export default function Home() {
   const hasData = useNeuronStore((s) => s.tree.size > 0);
   const error = useNeuronStore((s) => s.error);
   const clearSelection = useNeuronStore((s) => s.clearSelection);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>("upload");
+  const [loadingNeuron, setLoadingNeuron] = useState<string | null>(null);
+
+  const handleLoadNeuron = useCallback(async (name: string) => {
+    setLoadingNeuron(name);
+    await useNeuronStore.getState().loadFromNeuromorpho(name);
+    setLoadingNeuron(null);
+  }, []);
 
   // Global keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       // Don't handle shortcuts when typing in inputs
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.target instanceof HTMLSelectElement) return;
 
       if (e.key === "Escape") {
         if (contextMenu) {
@@ -130,7 +142,26 @@ export default function Home() {
         canvas={<NeuronCanvas />}
         panels={
           <>
-            <FileUpload />
+            {/* Sidebar tab toggle */}
+            <div className="border-border flex rounded-lg border">
+              <TabButton active={sidebarTab === "upload"} onClick={() => setSidebarTab("upload")}>
+                File Upload
+              </TabButton>
+              <TabButton active={sidebarTab === "browse"} onClick={() => setSidebarTab("browse")}>
+                NeuroMorpho
+              </TabButton>
+            </div>
+
+            {/* Tab content */}
+            {sidebarTab === "upload" ? (
+              <FileUpload />
+            ) : (
+              <NeuromorphoBrowser
+                onLoadNeuron={handleLoadNeuron}
+                loadingNeuron={loadingNeuron}
+              />
+            )}
+
             {error && (
               <div className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
                 {error}
@@ -152,6 +183,29 @@ export default function Home() {
         />
       )}
     </>
+  );
+}
+
+function TabButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      className={`flex-1 px-3 py-1.5 text-xs font-medium transition-colors ${
+        active
+          ? "bg-accent text-white"
+          : "text-text-muted hover:bg-surface-hover"
+      }`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
   );
 }
 
