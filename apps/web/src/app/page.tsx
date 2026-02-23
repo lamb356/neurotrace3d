@@ -48,6 +48,16 @@ export default function Home() {
         useNeuronStore.getState().redo();
         return;
       }
+
+      // Delete selected nodes
+      if (e.key === "Delete" || e.key === "Backspace") {
+        const { selection, deleteNodes } = useNeuronStore.getState();
+        if (selection.size > 0) {
+          e.preventDefault();
+          deleteNodes(Array.from(selection));
+        }
+        return;
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);

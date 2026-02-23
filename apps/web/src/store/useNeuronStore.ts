@@ -5,6 +5,13 @@ import { parseSWC, computeStats, validateSWC } from "@neurotrace/swc-parser";
 import type { NeuronStore } from "./types";
 import { recomputeDerived } from "./derived";
 import { applyOpsToTree, invertOps } from "./operations";
+import {
+  createMoveOps,
+  createDeleteOps,
+  createInsertOps,
+  createRetypeOps,
+  createReparentOps,
+} from "./editActions";
 
 const MAX_HISTORY = 100;
 
@@ -161,6 +168,49 @@ export const useNeuronStore = create<NeuronStore>()(
         applyOpsToTree(state.tree, ops);
         state.history.push(ops);
         recomputeDerived(state);
+      });
+    },
+
+    moveNode(id, x, y, z) {
+      const ops = createMoveOps(useNeuronStore.getState().tree, id, x, y, z);
+      if (ops.length > 0) useNeuronStore.getState().applyOps(ops);
+    },
+
+    deleteNodes(ids) {
+      const state = useNeuronStore.getState();
+      const ops = createDeleteOps(state, ids);
+      if (ops.length > 0) state.applyOps(ops);
+    },
+
+    insertNode(parentId, childId, position) {
+      const state = useNeuronStore.getState();
+      const ops = createInsertOps(state.tree, parentId, childId, position);
+      if (ops.length > 0) state.applyOps(ops);
+    },
+
+    retypeNodes(ids, newType) {
+      const ops = createRetypeOps(useNeuronStore.getState().tree, ids, newType);
+      if (ops.length > 0) useNeuronStore.getState().applyOps(ops);
+    },
+
+    reparentNode(id, newParentId) {
+      const ops = createReparentOps(useNeuronStore.getState().tree, id, newParentId);
+      if (ops.length > 0) useNeuronStore.getState().applyOps(ops);
+    },
+
+    selectSubtree(rootId) {
+      set((state) => {
+        const ids = new Set<number>([rootId]);
+        const queue = [rootId];
+        while (queue.length > 0) {
+          const current = queue.shift()!;
+          const children = state.childIndex.get(current) ?? [];
+          for (const child of children) {
+            ids.add(child);
+            queue.push(child);
+          }
+        }
+        state.selection = ids;
       });
     },
   })),

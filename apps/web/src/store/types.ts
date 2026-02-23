@@ -52,6 +52,14 @@ export interface NeuronActions {
   applyOps(ops: TreeOp[]): void;
   undo(): void;
   redo(): void;
+
+  // Edit operations
+  moveNode(id: number, x: number, y: number, z: number): void;
+  deleteNodes(ids: number[]): void;
+  insertNode(parentId: number, childId: number, position: { x: number; y: number; z: number }): void;
+  retypeNodes(ids: number[], newType: number): void;
+  reparentNode(id: number, newParentId: number): void;
+  selectSubtree(rootId: number): void;
 }
 
 export type NeuronStore = NeuronState & NeuronActions;
