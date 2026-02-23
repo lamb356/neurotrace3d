@@ -39,6 +39,9 @@ export interface NeuronState {
   // Extend mode
   extendingFrom: number | null;
 
+  // Keyboard navigation
+  navCursor: number | null;
+
   // Measurements
   measurements: Measurement[];
   measurePending: number[];
@@ -86,6 +89,10 @@ export interface NeuronActions {
   pruneSubtree(rootId: number): void;
   selectSubtree(rootId: number): void;
   setActiveTool(tool: NeuronState["activeTool"]): void;
+
+  // Keyboard navigation
+  navigateTo(nodeId: number, extend: boolean): void;
+  setNavCursor(id: number | null): void;
 
   // Extend
   startExtend(tipId: number): void;

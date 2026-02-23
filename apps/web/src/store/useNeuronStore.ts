@@ -36,6 +36,7 @@ const initialState = {
   future: [],
   activeTool: "select" as const,
   extendingFrom: null,
+  navCursor: null,
   measurements: [] as import("./types").Measurement[],
   measurePending: [] as number[],
   source: null,
@@ -75,6 +76,7 @@ export const useNeuronStore = create<NeuronStore>()(
           state.measurements = [];
           state.measurePending = [];
           state.extendingFrom = null;
+          state.navCursor = null;
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -134,6 +136,7 @@ export const useNeuronStore = create<NeuronStore>()(
     selectNode(id: number) {
       set((state) => {
         state.selection = new Set([id]);
+        state.navCursor = null;
       });
     },
 
@@ -239,6 +242,28 @@ export const useNeuronStore = create<NeuronStore>()(
     reparentNode(id, newParentId) {
       const ops = createReparentOps(useNeuronStore.getState().tree, id, newParentId);
       if (ops.length > 0) useNeuronStore.getState().applyOps(ops);
+    },
+
+    navigateTo(nodeId: number, extend: boolean) {
+      set((state) => {
+        if (!state.tree.has(nodeId)) return;
+        state.navCursor = nodeId;
+        if (extend) {
+          state.selection.add(nodeId);
+        } else {
+          state.selection = new Set([nodeId]);
+        }
+        const node = state.tree.get(nodeId);
+        if (node) {
+          state.focusTarget = { x: node.x, y: node.y, z: node.z };
+        }
+      });
+    },
+
+    setNavCursor(id: number | null) {
+      set((state) => {
+        state.navCursor = id;
+      });
     },
 
     pruneSubtree(rootId) {

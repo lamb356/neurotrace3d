@@ -59,6 +59,7 @@ export default function Home() {
           setContextMenu(null);
           return;
         }
+        useNeuronStore.getState().setNavCursor(null);
         clearSelection();
         return;
       }
@@ -126,6 +127,61 @@ export default function Home() {
           useNeuronStore.getState().setActiveTool("extend");
           return;
         }
+      }
+
+      // Arrow key navigation (no ctrl/meta/alt required, shift extends selection)
+      if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        const store = useNeuronStore.getState();
+        if (store.tree.size === 0) return;
+
+        let cursor = store.navCursor;
+        if (cursor === null || !store.tree.has(cursor)) {
+          // Initialize: start from first selected node, or first root
+          if (store.selection.size > 0) {
+            cursor = store.selection.values().next().value!;
+          } else if (store.roots.length > 0) {
+            cursor = store.roots[0];
+          } else {
+            return;
+          }
+          store.navigateTo(cursor, e.shiftKey);
+          return;
+        }
+
+        const node = store.tree.get(cursor);
+        if (!node) return;
+        let targetId: number | null = null;
+
+        if (e.key === "ArrowUp") {
+          if (node.parentId !== -1) targetId = node.parentId;
+        } else if (e.key === "ArrowDown") {
+          const children = store.childIndex.get(cursor) ?? [];
+          if (children.length > 0) targetId = children[0];
+        } else if (e.key === "ArrowLeft") {
+          if (node.parentId === -1) {
+            const idx = store.roots.indexOf(cursor);
+            if (idx > 0) targetId = store.roots[idx - 1];
+          } else {
+            const siblings = store.childIndex.get(node.parentId) ?? [];
+            const idx = siblings.indexOf(cursor);
+            if (idx > 0) targetId = siblings[idx - 1];
+          }
+        } else if (e.key === "ArrowRight") {
+          if (node.parentId === -1) {
+            const idx = store.roots.indexOf(cursor);
+            if (idx < store.roots.length - 1) targetId = store.roots[idx + 1];
+          } else {
+            const siblings = store.childIndex.get(node.parentId) ?? [];
+            const idx = siblings.indexOf(cursor);
+            if (idx < siblings.length - 1) targetId = siblings[idx + 1];
+          }
+        }
+
+        if (targetId !== null) {
+          store.navigateTo(targetId, e.shiftKey);
+        }
+        return;
       }
     };
     window.addEventListener("keydown", handler);

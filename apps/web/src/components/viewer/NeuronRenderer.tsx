@@ -41,6 +41,7 @@ export default function NeuronRenderer() {
   const tree = useNeuronStore((s) => s.tree);
   const hoveredId = useNeuronStore((s) => s.hovered);
   const selectedIds = useNeuronStore((s) => s.selection);
+  const navCursorId = useNeuronStore((s) => s.navCursor);
   const setHovered = useNeuronStore((s) => s.setHovered);
 
   const meshRef = useRef<InstancedMesh>(null);
@@ -132,7 +133,9 @@ export default function NeuronRenderer() {
       const idx = mapping.nodeIdToInstance.get(id);
       if (idx === undefined) continue;
 
-      if (selectedIds.has(id)) {
+      if (navCursorId === id) {
+        tmpColor.set("#00bcd4");
+      } else if (selectedIds.has(id)) {
         tmpColor.set("#e67e22");
       } else if (hoveredId === id) {
         tmpColor.set("#f1c40f");
@@ -143,7 +146,7 @@ export default function NeuronRenderer() {
     }
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     invalidate();
-  }, [tree, hoveredId, selectedIds, mapping, invalidate]);
+  }, [tree, hoveredId, selectedIds, navCursorId, mapping, invalidate]);
 
   // Build line segments geometry
   const linesGeometry = useMemo(() => {

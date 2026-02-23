@@ -43,3 +43,4 @@ export function getTypeThreeColor(typeCode: number): Color {
 
 export const HIGHLIGHT_COLOR = new Color("#f1c40f");
 export const SELECT_COLOR = new Color("#e67e22");
+export const NAV_CURSOR_COLOR = new Color("#00bcd4");
