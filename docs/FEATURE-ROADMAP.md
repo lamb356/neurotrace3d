@@ -22,8 +22,9 @@
 
 ## Harder (2-4 hours each)
 - [ ] 12. Branch merge
-- [ ] 13. Orthogonal 2D view panels (XY, XZ, YZ)
-- [ ] 14. Keyboard shortcuts system
+- [x] 13. Orthographic views (perspective/ortho toggle, XY/XZ/YZ axis snap)
+- [x] 14. Keyboard navigation (arrow keys walk tree, shift extends selection)
+- [x] 14b. Minimap (inset overview with frustum indicator)
 
 ## Heavy (half-day+ each)
 - [ ] 15. Loro CRDT collaborative editing
