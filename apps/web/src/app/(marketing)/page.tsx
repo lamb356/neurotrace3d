@@ -37,6 +37,14 @@ const FEATURES = [
     title: "NeuroMorpho.org Browser",
     description: "Search and load neurons directly from the NeuroMorpho.org database with 280,000+ reconstructions.",
   },
+  {
+    title: "Batch Analysis",
+    description: "Drop multiple SWC files to compute morphometrics across all neurons. Export results as CSV or XLSX.",
+  },
+  {
+    title: "Dendrogram & Morphometrics",
+    description: "Topological dendrogram view, Strahler order, branch angles, tortuosity, convex hull volume, and fractal dimension.",
+  },
 ];
 
 const COMPARISONS = [
@@ -46,6 +54,7 @@ const COMPARISONS = [
   { feature: "SWC editing", us: "Split, prune, extend, move, retype", them: "Full editor suite" },
   { feature: "Sholl analysis", us: "Built-in with export", them: "Built-in" },
   { feature: "NeuroMorpho.org", us: "Integrated browser", them: "Manual download" },
+  { feature: "Batch analysis", us: "Built-in with CSV/XLSX export", them: "Separate module" },
   { feature: "Collaboration", us: "Coming soon (CRDT)", them: "Not available" },
 ];
 
@@ -68,6 +77,12 @@ export default function LandingPage() {
             className="bg-accent hover:bg-accent-hover rounded-lg px-6 py-3 font-semibold text-white transition-colors"
           >
             Open Viewer
+          </Link>
+          <Link
+            href="/batch"
+            className="border-border hover:bg-surface-hover rounded-lg border px-6 py-3 font-semibold transition-colors"
+          >
+            Batch Analysis
           </Link>
           <a
             href="https://github.com/lamb356/neurotrace3d"

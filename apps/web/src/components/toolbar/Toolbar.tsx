@@ -121,8 +121,13 @@ export default function Toolbar() {
 
       <Divider />
 
-      {/* Export + Screenshot */}
+      {/* Export + Screenshot + Batch */}
       <ToolButton icon="↗" label="Export SWC" onClick={handleExport} />
+      <ToolButton
+        icon="BA"
+        label="Batch Analysis"
+        onClick={() => window.open("/batch", "_blank")}
+      />
       <ToolButton
         icon="📷"
         label="Screenshot"
