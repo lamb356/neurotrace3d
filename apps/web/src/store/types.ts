@@ -58,6 +58,9 @@ export interface NeuronState {
   // Minimap
   showMinimap: boolean;
 
+  // Post-processing
+  postProcessing: boolean;
+
   // UI
   loading: boolean;
   error: string | null;
@@ -114,6 +117,9 @@ export interface NeuronActions {
 
   // Minimap
   setShowMinimap(show: boolean): void;
+
+  // Post-processing
+  setPostProcessing(enabled: boolean): void;
 
   // Sholl
   setShowShollSpheres(show: boolean): void;

@@ -43,6 +43,7 @@ const initialState = {
   source: null,
   neuromorphoMeta: null,
   showMinimap: false,
+  postProcessing: true,
   showShollSpheres: false,
   shollRadiusStep: 10,
   loading: false,
@@ -416,6 +417,12 @@ export const useNeuronStore = create<NeuronStore>()(
     setShowMinimap(show: boolean) {
       set((state) => {
         state.showMinimap = show;
+      });
+    },
+
+    setPostProcessing(enabled: boolean) {
+      set((state) => {
+        state.postProcessing = enabled;
       });
     },
 

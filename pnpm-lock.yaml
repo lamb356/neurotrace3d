@@ -32,6 +32,9 @@ importers:
       immer:
         specifier: ^11.1.4
         version: 11.1.4
+      n8ao:
+        specifier: ^1.10.1
+        version: 1.10.1(postprocessing@6.38.3(three@0.183.1))(three@0.183.1)
       next:
         specifier: ^16.1.6
         version: 16.1.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)

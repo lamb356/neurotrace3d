@@ -73,6 +73,7 @@ export default function Toolbar() {
   const measureCount = useNeuronStore((s) => s.measurements.length);
   const cameraMode = useNeuronStore((s) => s.cameraMode);
   const showMinimap = useNeuronStore((s) => s.showMinimap);
+  const postProcessing = useNeuronStore((s) => s.postProcessing);
 
   const handleUndo = () => useNeuronStore.getState().undo();
   const handleRedo = () => useNeuronStore.getState().redo();
@@ -136,6 +137,14 @@ export default function Toolbar() {
         label="Toggle Minimap"
         active={showMinimap}
         onClick={() => useNeuronStore.getState().setShowMinimap(!showMinimap)}
+      />
+
+      {/* Post-processing toggle */}
+      <ToolButton
+        icon="FX"
+        label="Toggle post-processing (disable for performance)"
+        active={postProcessing}
+        onClick={() => useNeuronStore.getState().setPostProcessing(!postProcessing)}
       />
 
       <Divider />
