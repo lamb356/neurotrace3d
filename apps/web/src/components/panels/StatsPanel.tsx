@@ -1,13 +1,12 @@
 "use client";
 
-import type { MorphologyStats } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 import { getTypeColor, getTypeLabel } from "@/lib/colors";
 
-interface StatsPanelProps {
-  stats: MorphologyStats;
-}
+export default function StatsPanel() {
+  const stats = useNeuronStore((s) => s.stats);
+  if (!stats) return null;
 
-export default function StatsPanel({ stats }: StatsPanelProps) {
   return (
     <div className="flex flex-col gap-3">
       <h3 className="text-sm font-semibold uppercase tracking-wider">Statistics</h3>
@@ -16,8 +15,8 @@ export default function StatsPanel({ stats }: StatsPanelProps) {
         <Stat label="Roots" value={stats.rootCount} />
         <Stat label="Branch Points" value={stats.branchPoints} />
         <Stat label="Terminal Tips" value={stats.terminalTips} />
-        <Stat label="Total Length" value={`${stats.totalLength.toFixed(1)} µm`} />
-        <Stat label="Max Path Dist" value={`${stats.maxPathDistance.toFixed(1)} µm`} />
+        <Stat label="Total Length" value={`${stats.totalLength.toFixed(1)} \u00b5m`} />
+        <Stat label="Max Path Dist" value={`${stats.maxPathDistance.toFixed(1)} \u00b5m`} />
         <Stat label="Max Branch Order" value={stats.maxBranchOrder} />
       </div>
       <div className="flex flex-wrap gap-1.5">

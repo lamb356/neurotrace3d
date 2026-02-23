@@ -13,29 +13,20 @@ import {
   LineSegments,
 } from "three";
 import { useThree } from "@react-three/fiber";
-import type { SWCParseResult } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 import { getTypeThreeColor } from "@/lib/colors";
 
-interface NeuronRendererProps {
-  data: SWCParseResult;
-  hoveredId: number | null;
-  selectedIds: Set<number>;
-  onHover: (id: number | null) => void;
-  onClick: (id: number, shiftKey: boolean) => void;
-  onDoubleClick: (id: number) => void;
-}
-
-/** Maps instance indices ↔ node IDs for raycasting */
+/** Maps instance indices <-> node IDs for raycasting */
 export interface InstanceMapping {
   instanceToNodeId: number[];
   nodeIdToInstance: Map<number, number>;
 }
 
-export function buildInstanceMapping(data: SWCParseResult): InstanceMapping {
+export function buildInstanceMapping(tree: Map<number, unknown>): InstanceMapping {
   const instanceToNodeId: number[] = [];
   const nodeIdToInstance = new Map<number, number>();
   let idx = 0;
-  for (const [id] of data.nodes) {
+  for (const id of tree.keys()) {
     instanceToNodeId[idx] = id;
     nodeIdToInstance.set(id, idx);
     idx++;
@@ -46,20 +37,36 @@ export function buildInstanceMapping(data: SWCParseResult): InstanceMapping {
 const tmpMatrix = new Matrix4();
 const tmpColor = new Color();
 
-export default function NeuronRenderer({
-  data,
-  hoveredId,
-  selectedIds,
-  onHover,
-  onClick,
-  onDoubleClick,
-}: NeuronRendererProps) {
+export default function NeuronRenderer() {
+  const tree = useNeuronStore((s) => s.tree);
+  const hoveredId = useNeuronStore((s) => s.hovered);
+  const selectedIds = useNeuronStore((s) => s.selection);
+  const setHovered = useNeuronStore((s) => s.setHovered);
+
   const meshRef = useRef<InstancedMesh>(null);
   const linesRef = useRef<LineSegments>(null);
   const { invalidate } = useThree();
 
-  const mapping = useMemo(() => buildInstanceMapping(data), [data]);
-  const count = data.nodes.size;
+  const mapping = useMemo(() => buildInstanceMapping(tree), [tree]);
+  const count = tree.size;
+
+  const handleClick = (instanceId: number, shiftKey: boolean) => {
+    const nodeId = mapping.instanceToNodeId[instanceId];
+    if (nodeId === undefined) return;
+    const store = useNeuronStore.getState();
+    if (shiftKey) {
+      store.toggleSelection(nodeId);
+    } else {
+      store.selectNode(nodeId);
+    }
+  };
+
+  const handleDoubleClick = (instanceId: number) => {
+    const nodeId = mapping.instanceToNodeId[instanceId];
+    if (nodeId !== undefined) {
+      useNeuronStore.getState().setFocusTarget(nodeId);
+    }
+  };
 
   // Build InstancedMesh matrices and colors
   useEffect(() => {
@@ -67,7 +74,7 @@ export default function NeuronRenderer({
     if (!mesh) return;
 
     let idx = 0;
-    for (const [, node] of data.nodes) {
+    for (const [, node] of tree) {
       const scale = Math.max(node.radius, 0.3);
       tmpMatrix.makeScale(scale, scale, scale);
       tmpMatrix.setPosition(node.x, node.y, node.z);
@@ -78,14 +85,14 @@ export default function NeuronRenderer({
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     invalidate();
-  }, [data, invalidate]);
+  }, [tree, invalidate]);
 
   // Update highlight/selection colors
   useEffect(() => {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    for (const [id, node] of data.nodes) {
+    for (const [id, node] of tree) {
       const idx = mapping.nodeIdToInstance.get(id);
       if (idx === undefined) continue;
 
@@ -100,14 +107,14 @@ export default function NeuronRenderer({
     }
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     invalidate();
-  }, [data, hoveredId, selectedIds, mapping, invalidate]);
+  }, [tree, hoveredId, selectedIds, mapping, invalidate]);
 
   // Build line segments geometry
   const linesGeometry = useMemo(() => {
     const edges: { px: number; py: number; pz: number; cx: number; cy: number; cz: number; pType: number; cType: number }[] = [];
-    for (const [, node] of data.nodes) {
+    for (const [, node] of tree) {
       if (node.parentId === -1) continue;
-      const parent = data.nodes.get(node.parentId);
+      const parent = tree.get(node.parentId);
       if (!parent) continue;
       edges.push({
         px: parent.x, py: parent.y, pz: parent.z,
@@ -142,7 +149,7 @@ export default function NeuronRenderer({
     geom.setAttribute("position", new Float32BufferAttribute(positions, 3));
     geom.setAttribute("color", new Float32BufferAttribute(colors, 3));
     return geom;
-  }, [data]);
+  }, [tree]);
 
   const sphereGeom = useMemo(() => new SphereGeometry(1, 8, 6), []);
   const material = useMemo(() => new MeshStandardMaterial({ toneMapped: false }), []);
@@ -157,24 +164,20 @@ export default function NeuronRenderer({
         onPointerMove={(e) => {
           e.stopPropagation();
           if (e.instanceId !== undefined) {
-            onHover(mapping.instanceToNodeId[e.instanceId] ?? null);
+            setHovered(mapping.instanceToNodeId[e.instanceId] ?? null);
           }
         }}
-        onPointerLeave={() => onHover(null)}
+        onPointerLeave={() => setHovered(null)}
         onClick={(e) => {
           e.stopPropagation();
           if (e.instanceId !== undefined) {
-            const nodeId = mapping.instanceToNodeId[e.instanceId];
-            if (nodeId !== undefined) {
-              onClick(nodeId, (e.nativeEvent as MouseEvent).shiftKey);
-            }
+            handleClick(e.instanceId, (e.nativeEvent as MouseEvent).shiftKey);
           }
         }}
         onDoubleClick={(e) => {
           e.stopPropagation();
           if (e.instanceId !== undefined) {
-            const nodeId = mapping.instanceToNodeId[e.instanceId];
-            if (nodeId !== undefined) onDoubleClick(nodeId);
+            handleDoubleClick(e.instanceId);
           }
         }}
       />

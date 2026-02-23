@@ -8,8 +8,7 @@ import StatsPanel from "@/components/panels/StatsPanel";
 import WarningsPanel from "@/components/panels/WarningsPanel";
 import MetadataPanel from "@/components/panels/MetadataPanel";
 import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
-import { useNeuronData } from "@/hooks/useNeuronData";
-import { useNeuronSelection } from "@/hooks/useNeuronSelection";
+import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
   ssr: false,
@@ -21,17 +20,9 @@ const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
 });
 
 export default function Home() {
-  const { result, stats, warnings, filename, loading, error, loadFile } = useNeuronData();
-  const {
-    hoveredId,
-    selectedIds,
-    focusTarget,
-    handleHover,
-    handleClick,
-    handleDoubleClick,
-    clearSelection,
-    handleFocusDone,
-  } = useNeuronSelection(result);
+  const hasData = useNeuronStore((s) => s.tree.size > 0);
+  const error = useNeuronStore((s) => s.error);
+  const clearSelection = useNeuronStore((s) => s.clearSelection);
 
   // Escape key clears selection
   useEffect(() => {
@@ -42,66 +33,53 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handler);
   }, [clearSelection]);
 
-  const panels = result ? (
-    <>
-      <FileUpload onFile={loadFile} filename={filename} loading={loading} />
-      {error && (
-        <div className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
-          {error}
-        </div>
-      )}
-      {stats && <StatsPanel stats={stats} />}
-      <MetadataPanel metadata={result.metadata} />
-      {result && <NodeInfoPanel data={result} selectedIds={selectedIds} />}
-      <WarningsPanel warnings={warnings} />
-    </>
-  ) : null;
-
-  if (!result) {
+  if (!hasData) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
         <h1 className="text-4xl font-bold tracking-tight">NeuroTrace3D</h1>
         <p className="text-text-muted text-lg">3D neuron morphology viewer</p>
         <div className="w-96">
-          <FileUpload onFile={loadFile} filename={filename} loading={loading} />
+          <FileUpload />
         </div>
         {error && (
           <p className="text-sm text-red-400">{error}</p>
         )}
-        <SampleLoader onLoad={loadFile} />
+        <SampleLoader />
       </main>
     );
   }
 
   return (
     <ViewerContainer
-      canvas={
-        <NeuronCanvas
-          data={result}
-          hoveredId={hoveredId}
-          selectedIds={selectedIds}
-          focusTarget={focusTarget}
-          onHover={handleHover}
-          onClick={handleClick}
-          onDoubleClick={handleDoubleClick}
-          onFocusDone={handleFocusDone}
-        />
+      canvas={<NeuronCanvas />}
+      panels={
+        <>
+          <FileUpload />
+          {error && (
+            <div className="rounded border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
+              {error}
+            </div>
+          )}
+          <StatsPanel />
+          <MetadataPanel />
+          <NodeInfoPanel />
+          <WarningsPanel />
+        </>
       }
-      panels={panels}
     />
   );
 }
 
 /** Helper to load bundled sample files */
-function SampleLoader({ onLoad }: { onLoad: (file: File) => void }) {
+function SampleLoader() {
+  const loadSWC = useNeuronStore((s) => s.loadSWC);
   const samples = ["sample1.swc", "sample2.swc", "sample3.swc"];
 
   const handleClick = async (name: string) => {
     const res = await fetch(`/samples/${name}`);
     if (!res.ok) return;
     const text = await res.text();
-    const file = new File([text], name, { type: "text/plain" });
-    onLoad(file);
+    loadSWC(text, name);
   };
 
   return (

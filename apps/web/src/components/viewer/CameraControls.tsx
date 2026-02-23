@@ -4,15 +4,13 @@ import { useRef, useEffect, type ElementRef } from "react";
 import { OrbitControls } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, Box3 } from "three";
-import type { SWCParseResult } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 
-interface CameraControlsProps {
-  data: SWCParseResult | null;
-  focusTarget: Vector3 | null;
-  onFocusDone: () => void;
-}
+export default function CameraControls() {
+  const tree = useNeuronStore((s) => s.tree);
+  const focusTarget = useNeuronStore((s) => s.focusTarget);
+  const clearFocusTarget = useNeuronStore((s) => s.clearFocusTarget);
 
-export default function CameraControls({ data, focusTarget, onFocusDone }: CameraControlsProps) {
   const controlsRef = useRef<ElementRef<typeof OrbitControls>>(null);
   const { camera, invalidate } = useThree();
   const lerpTarget = useRef<Vector3 | null>(null);
@@ -20,11 +18,11 @@ export default function CameraControls({ data, focusTarget, onFocusDone }: Camer
 
   // Auto-fit camera to neuron bounding box on data load
   useEffect(() => {
-    if (!data || data.nodes.size === 0 || !controlsRef.current) return;
+    if (tree.size === 0 || !controlsRef.current) return;
 
     const box = new Box3();
     const v = new Vector3();
-    for (const [, node] of data.nodes) {
+    for (const [, node] of tree) {
       v.set(node.x, node.y, node.z);
       box.expandByPoint(v);
     }
@@ -41,12 +39,12 @@ export default function CameraControls({ data, focusTarget, onFocusDone }: Camer
     controlsRef.current.target.copy(center);
     controlsRef.current.update();
     invalidate();
-  }, [data, camera, invalidate]);
+  }, [tree, camera, invalidate]);
 
   // Handle smooth focus on double-click target
   useEffect(() => {
     if (focusTarget) {
-      lerpTarget.current = focusTarget.clone();
+      lerpTarget.current = new Vector3(focusTarget.x, focusTarget.y, focusTarget.z);
       lerpProgress.current = 0;
     }
   }, [focusTarget]);
@@ -57,7 +55,7 @@ export default function CameraControls({ data, focusTarget, onFocusDone }: Camer
     if (lerpProgress.current >= 1) {
       controlsRef.current.target.copy(lerpTarget.current);
       lerpTarget.current = null;
-      onFocusDone();
+      clearFocusTarget();
     } else {
       controlsRef.current.target.lerp(lerpTarget.current, 0.1);
     }

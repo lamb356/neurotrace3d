@@ -1,23 +1,22 @@
 "use client";
 
-import type { SWCParseResult } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 import { getTypeColor, getTypeLabel } from "@/lib/colors";
 
-interface NodeInfoPanelProps {
-  data: SWCParseResult;
-  selectedIds: Set<number>;
-}
+export default function NodeInfoPanel() {
+  const tree = useNeuronStore((s) => s.tree);
+  const childIndex = useNeuronStore((s) => s.childIndex);
+  const selection = useNeuronStore((s) => s.selection);
 
-export default function NodeInfoPanel({ data, selectedIds }: NodeInfoPanelProps) {
-  if (selectedIds.size === 0) return null;
+  if (selection.size === 0) return null;
 
-  const ids = Array.from(selectedIds);
+  const ids = Array.from(selection);
 
   if (ids.length === 1) {
-    const node = data.nodes.get(ids[0]);
+    const node = tree.get(ids[0]);
     if (!node) return null;
 
-    const children = data.childIndex.get(node.id) ?? [];
+    const children = childIndex.get(node.id) ?? [];
     return (
       <div className="flex flex-col gap-2">
         <h3 className="text-sm font-semibold uppercase tracking-wider">Selected Node</h3>

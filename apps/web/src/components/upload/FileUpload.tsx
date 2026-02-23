@@ -1,24 +1,23 @@
 "use client";
 
 import { useRef, useState, useCallback } from "react";
+import { useNeuronStore } from "@/store/useNeuronStore";
 
-interface FileUploadProps {
-  onFile: (file: File) => void;
-  filename: string | null;
-  loading: boolean;
-}
+export default function FileUpload() {
+  const loadFile = useNeuronStore((s) => s.loadFile);
+  const fileName = useNeuronStore((s) => s.fileName);
+  const loading = useNeuronStore((s) => s.loading);
 
-export default function FileUpload({ onFile, filename, loading }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
 
   const handleFile = useCallback(
     (file: File) => {
       if (file.name.endsWith(".swc")) {
-        onFile(file);
+        loadFile(file);
       }
     },
-    [onFile],
+    [loadFile],
   );
 
   const handleDrop = useCallback(
@@ -58,10 +57,10 @@ export default function FileUpload({ onFile, filename, loading }: FileUploadProp
       />
       {loading ? (
         <p className="text-text-muted text-sm">Loading...</p>
-      ) : filename ? (
+      ) : fileName ? (
         <p className="text-sm">
-          <span className="text-accent font-medium">{filename}</span>
-          <span className="text-text-muted ml-2">— drop another to replace</span>
+          <span className="text-accent font-medium">{fileName}</span>
+          <span className="text-text-muted ml-2">&mdash; drop another to replace</span>
         </p>
       ) : (
         <p className="text-text-muted text-sm">Drop .swc file or click to browse</p>

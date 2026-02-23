@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { ParseWarning } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 
-interface WarningsPanelProps {
-  warnings: ParseWarning[];
-}
-
-export default function WarningsPanel({ warnings }: WarningsPanelProps) {
+export default function WarningsPanel() {
+  const warnings = useNeuronStore((s) => s.warnings);
   const [expanded, setExpanded] = useState(false);
 
   if (warnings.length === 0) return null;
@@ -20,7 +17,7 @@ export default function WarningsPanel({ warnings }: WarningsPanelProps) {
       >
         <span className="text-yellow-500">!</span>
         Warnings ({warnings.length})
-        <span className="text-text-muted text-xs">{expanded ? "▲" : "▼"}</span>
+        <span className="text-text-muted text-xs">{expanded ? "\u25b2" : "\u25bc"}</span>
       </button>
       {expanded && (
         <ul className="flex flex-col gap-1.5">

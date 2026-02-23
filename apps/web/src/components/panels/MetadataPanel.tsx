@@ -1,12 +1,10 @@
 "use client";
 
-import type { SWCMetadata } from "@neurotrace/swc-parser";
+import { useNeuronStore } from "@/store/useNeuronStore";
 
-interface MetadataPanelProps {
-  metadata: SWCMetadata;
-}
+export default function MetadataPanel() {
+  const metadata = useNeuronStore((s) => s.metadata);
 
-export default function MetadataPanel({ metadata }: MetadataPanelProps) {
   const entries = [
     { label: "Source", value: metadata.originalSource },
     { label: "Species", value: metadata.species },
