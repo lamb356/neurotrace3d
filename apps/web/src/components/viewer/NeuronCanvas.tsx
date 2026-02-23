@@ -1,6 +1,7 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
+import { EffectComposer, SSAO, Bloom, SMAA } from "@react-three/postprocessing";
 import { useNeuronStore } from "@/store/useNeuronStore";
 import NeuronRenderer from "./NeuronRenderer";
 import CameraControls from "./CameraControls";
@@ -10,6 +11,19 @@ import MeasurementOverlay from "./MeasurementOverlay";
 import ShollSpheres from "./ShollSpheres";
 import BoxSelector from "./BoxSelector";
 import BranchExtender from "./BranchExtender";
+import GhostNode from "./GhostNode";
+
+const TOOL_CURSORS: Record<string, string> = {
+  select: "default",
+  "box-select": "crosshair",
+  move: "move",
+  insert: "cell",
+  delete: "not-allowed",
+  "measure-distance": "crosshair",
+  "measure-angle": "crosshair",
+  "path-select": "crosshair",
+  extend: "cell",
+};
 
 export default function NeuronCanvas() {
   const hasNodes = useNeuronStore((s) => s.tree.size > 0);
@@ -19,12 +33,22 @@ export default function NeuronCanvas() {
   return (
     <Canvas
       frameloop="demand"
-      gl={{ preserveDrawingBuffer: true }}
-      style={{ background: "var(--color-canvas-bg)" }}
+      gl={{ preserveDrawingBuffer: true, antialias: false }}
+      style={{
+        background: "var(--color-canvas-bg)",
+        cursor: TOOL_CURSORS[activeTool] ?? "default",
+      }}
       onPointerMissed={() => clearHover(null)}
     >
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[10, 10, 10]} intensity={0.8} />
+      {/* Lighting */}
+      <ambientLight intensity={0.25} />
+      <directionalLight position={[100, 100, 50]} intensity={1.4} />
+      <directionalLight position={[-80, -60, -100]} intensity={0.35} color="#3a6aff" />
+      <hemisphereLight args={["#1a3050", "#080810", 0.7]} />
+
+      {/* Depth fog */}
+      <fog attach="fog" args={["#070d1a", 600, 4000]} />
+
       <CameraControls />
       <ScreenshotHelper />
       {hasNodes && <NeuronRenderer />}
@@ -33,6 +57,14 @@ export default function NeuronCanvas() {
       {hasNodes && activeTool === "extend" && <BranchExtender />}
       {hasNodes && <MeasurementOverlay />}
       {hasNodes && <ShollSpheres />}
+      {hasNodes && (activeTool === "insert" || activeTool === "extend") && <GhostNode />}
+
+      {/* Post-processing */}
+      <EffectComposer multisampling={0}>
+        <SSAO samples={24} radius={4} intensity={25} />
+        <Bloom intensity={0.35} luminanceThreshold={0.82} />
+        <SMAA />
+      </EffectComposer>
     </Canvas>
   );
 }

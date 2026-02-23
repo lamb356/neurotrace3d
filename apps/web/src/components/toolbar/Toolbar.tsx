@@ -5,32 +5,71 @@ import { exportSWC } from "@/lib/exportSWC";
 import type { NeuronState } from "@/store/types";
 import ThemeToggle from "@/components/ThemeToggle";
 
-const CAMERA_MODES: { id: NeuronState["cameraMode"]; label: string; shortcut: string }[] = [
-  { id: "perspective", label: "3D", shortcut: "1" },
-  { id: "ortho-xy", label: "XY", shortcut: "2" },
-  { id: "ortho-xz", label: "XZ", shortcut: "3" },
-  { id: "ortho-yz", label: "YZ", shortcut: "4" },
+const CAMERA_MODES: { id: NeuronState["cameraMode"]; label: string; icon: string; shortcut: string }[] = [
+  { id: "perspective", label: "3D Perspective", icon: "3D", shortcut: "1" },
+  { id: "ortho-xy", label: "XY Ortho", icon: "XY", shortcut: "2" },
+  { id: "ortho-xz", label: "XZ Ortho", icon: "XZ", shortcut: "3" },
+  { id: "ortho-yz", label: "YZ Ortho", icon: "YZ", shortcut: "4" },
 ];
 
-const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[] = [
-  { id: "select", label: "Select", shortcut: "V" },
-  { id: "move", label: "Move", shortcut: "M" },
-  { id: "insert", label: "Insert", shortcut: "I" },
-  { id: "delete", label: "Delete", shortcut: "X" },
-  { id: "measure-distance", label: "Distance", shortcut: "D" },
-  { id: "measure-angle", label: "Angle", shortcut: "A" },
-  { id: "box-select", label: "Box", shortcut: "B" },
-  { id: "path-select", label: "Path", shortcut: "P" },
-  { id: "extend", label: "Extend", shortcut: "E" },
+const TOOLS: { id: NeuronState["activeTool"]; label: string; icon: string; shortcut: string }[] = [
+  { id: "select", label: "Select", icon: "V", shortcut: "V" },
+  { id: "move", label: "Move", icon: "M", shortcut: "M" },
+  { id: "insert", label: "Insert", icon: "I", shortcut: "I" },
+  { id: "delete", label: "Delete", icon: "X", shortcut: "X" },
+  { id: "measure-distance", label: "Distance", icon: "D", shortcut: "D" },
+  { id: "measure-angle", label: "Angle", icon: "A", shortcut: "A" },
+  { id: "box-select", label: "Box Select", icon: "B", shortcut: "B" },
+  { id: "path-select", label: "Path Select", icon: "P", shortcut: "P" },
+  { id: "extend", label: "Extend", icon: "E", shortcut: "E" },
 ];
+
+function ToolButton({
+  icon,
+  label,
+  shortcut,
+  active,
+  disabled,
+  onClick,
+}: {
+  icon: string;
+  label: string;
+  shortcut?: string;
+  active?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className={`group relative flex h-9 w-9 items-center justify-center rounded text-xs font-bold transition-colors ${
+        active
+          ? "bg-accent text-white"
+          : disabled
+            ? "text-text-muted opacity-30"
+            : "text-text-muted hover:bg-surface-hover hover:text-text"
+      }`}
+      onClick={onClick}
+      disabled={disabled}
+      title={`${label}${shortcut ? ` (${shortcut})` : ""}`}
+    >
+      {icon}
+      {/* Tooltip */}
+      <span className="pointer-events-none absolute left-full ml-2 hidden whitespace-nowrap rounded bg-surface border border-border px-2 py-1 text-xs text-text shadow-lg group-hover:block z-50">
+        {label}{shortcut ? ` (${shortcut})` : ""}
+      </span>
+    </button>
+  );
+}
+
+function Divider() {
+  return <div className="bg-border mx-auto my-1 h-px w-6" />;
+}
 
 export default function Toolbar() {
   const activeTool = useNeuronStore((s) => s.activeTool);
   const setActiveTool = useNeuronStore((s) => s.setActiveTool);
   const historyLen = useNeuronStore((s) => s.history.length);
   const futureLen = useNeuronStore((s) => s.future.length);
-  const nodeCount = useNeuronStore((s) => s.tree.size);
-  const selectionCount = useNeuronStore((s) => s.selection.size);
   const measureCount = useNeuronStore((s) => s.measurements.length);
   const cameraMode = useNeuronStore((s) => s.cameraMode);
   const showMinimap = useNeuronStore((s) => s.showMinimap);
@@ -40,125 +79,85 @@ export default function Toolbar() {
   const handleExport = () => exportSWC(useNeuronStore.getState());
 
   return (
-    <div className="bg-surface border-border flex items-center gap-1 border-b px-3 py-1.5">
+    <div className="bg-surface border-border flex w-12 flex-col items-center gap-0.5 border-r py-2">
       {/* Tool buttons */}
-      <div className="flex gap-1">
-        {TOOLS.map((tool) => (
-          <button
-            key={tool.id}
-            className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-              activeTool === tool.id
-                ? "bg-accent text-white"
-                : "text-text-muted hover:bg-surface-hover hover:text-text"
-            }`}
-            onClick={() => setActiveTool(tool.id)}
-            title={`${tool.label} (${tool.shortcut})`}
-          >
-            {tool.shortcut} {tool.label}
-          </button>
-        ))}
-      </div>
+      {TOOLS.map((tool) => (
+        <ToolButton
+          key={tool.id}
+          icon={tool.icon}
+          label={tool.label}
+          shortcut={tool.shortcut}
+          active={activeTool === tool.id}
+          onClick={() => setActiveTool(tool.id)}
+        />
+      ))}
 
       {measureCount > 0 && (
-        <button
-          className="text-text-muted hover:bg-surface-hover hover:text-text rounded px-2 py-1 text-xs transition-colors"
+        <ToolButton
+          icon="C"
+          label={`Clear Measurements (${measureCount})`}
           onClick={() => useNeuronStore.getState().clearMeasurements()}
-          title="Clear all measurements"
-        >
-          Clear ({measureCount})
-        </button>
+        />
       )}
 
-      <div className="bg-border mx-2 h-5 w-px" />
+      <Divider />
 
       {/* Undo / Redo */}
-      <div className="flex gap-1">
-        <button
-          className="rounded px-2 py-1 text-xs transition-colors enabled:hover:bg-surface-hover disabled:opacity-30"
-          onClick={handleUndo}
-          disabled={historyLen === 0}
-          title="Undo (Ctrl+Z)"
-        >
-          Undo
-        </button>
-        <button
-          className="rounded px-2 py-1 text-xs transition-colors enabled:hover:bg-surface-hover disabled:opacity-30"
-          onClick={handleRedo}
-          disabled={futureLen === 0}
-          title="Redo (Ctrl+Shift+Z)"
-        >
-          Redo
-        </button>
-      </div>
+      <ToolButton
+        icon="↶"
+        label="Undo"
+        shortcut="Ctrl+Z"
+        disabled={historyLen === 0}
+        onClick={handleUndo}
+      />
+      <ToolButton
+        icon="↷"
+        label="Redo"
+        shortcut="Ctrl+Shift+Z"
+        disabled={futureLen === 0}
+        onClick={handleRedo}
+      />
 
-      <div className="bg-border mx-2 h-5 w-px" />
+      <Divider />
 
-      {/* Export */}
-      <button
-        className="text-text-muted hover:bg-surface-hover hover:text-text rounded px-2 py-1 text-xs transition-colors"
-        onClick={handleExport}
-        title="Export edited SWC"
-      >
-        Export
-      </button>
-
-      {/* Screenshot */}
-      <button
-        className="text-text-muted hover:bg-surface-hover hover:text-text rounded px-2 py-1 text-xs transition-colors"
+      {/* Export + Screenshot */}
+      <ToolButton icon="↗" label="Export SWC" onClick={handleExport} />
+      <ToolButton
+        icon="📷"
+        label="Screenshot"
         onClick={() => window.dispatchEvent(new CustomEvent("take-screenshot"))}
-        title="Save PNG screenshot"
-      >
-        Screenshot
-      </button>
+      />
+
+      <Divider />
 
       {/* Minimap toggle */}
-      <button
-        className={`rounded px-2 py-1 text-xs transition-colors ${
-          showMinimap
-            ? "bg-accent text-white"
-            : "text-text-muted hover:bg-surface-hover hover:text-text"
-        }`}
+      <ToolButton
+        icon="▣"
+        label="Toggle Minimap"
+        active={showMinimap}
         onClick={() => useNeuronStore.getState().setShowMinimap(!showMinimap)}
-        title="Toggle minimap"
-      >
-        Minimap
-      </button>
+      />
 
-      <div className="bg-border mx-2 h-5 w-px" />
-
-      {/* Theme Toggle */}
-      <ThemeToggle />
-
-      <div className="bg-border mx-2 h-5 w-px" />
+      <Divider />
 
       {/* Camera mode buttons */}
-      <div className="flex gap-1">
-        {CAMERA_MODES.map((mode) => (
-          <button
-            key={mode.id}
-            className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
-              cameraMode === mode.id
-                ? "bg-accent text-white"
-                : "text-text-muted hover:bg-surface-hover hover:text-text"
-            }`}
-            onClick={() => useNeuronStore.getState().setCameraMode(mode.id)}
-            title={`${mode.label} view (${mode.shortcut})`}
-          >
-            {mode.label}
-          </button>
-        ))}
+      {CAMERA_MODES.map((mode) => (
+        <ToolButton
+          key={mode.id}
+          icon={mode.icon}
+          label={mode.label}
+          shortcut={mode.shortcut}
+          active={cameraMode === mode.id}
+          onClick={() => useNeuronStore.getState().setCameraMode(mode.id)}
+        />
+      ))}
+
+      <Divider />
+
+      {/* Theme Toggle */}
+      <div className="flex items-center justify-center">
+        <ThemeToggle />
       </div>
-
-      {/* Spacer */}
-      <div className="flex-1" />
-
-      {/* Status */}
-      <span className="text-text-muted text-xs">
-        {nodeCount} nodes
-        {selectionCount > 0 && (
-          <span className="text-accent ml-2">{selectionCount} selected</span>
-        )}
-      </span>
     </div>
   );
 }

@@ -23,7 +23,7 @@ export default function MeasurementOverlay() {
         return (
           <mesh key={`pending-${id}`} position={[node.x, node.y, node.z]}>
             <sphereGeometry args={[Math.max(node.radius, 0.5) * 1.5, 16, 12]} />
-            <meshBasicMaterial color="#f39c12" transparent opacity={0.5} />
+            <meshBasicMaterial color="#ffd700" transparent opacity={0.5} />
           </mesh>
         );
       })}
@@ -54,7 +54,7 @@ function MeasurementViz({
             [a.x, a.y, a.z],
             [b.x, b.y, b.z],
           ]}
-          color="#f39c12"
+          color="#ffd700"
           lineWidth={2}
           dashed
           dashSize={2}
@@ -63,12 +63,15 @@ function MeasurementViz({
         <Html position={mid} center style={{ pointerEvents: "none" }}>
           <div
             style={{
-              background: "rgba(0,0,0,0.8)",
-              color: "#f39c12",
-              padding: "2px 6px",
+              background: "rgba(7,13,26,0.85)",
+              color: "#ffd700",
+              padding: "2px 8px",
               borderRadius: 4,
               fontSize: 11,
               whiteSpace: "nowrap",
+              border: "1px solid rgba(255,215,0,0.3)",
+              fontFamily: "ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace",
+              fontVariantNumeric: "tabular-nums",
             }}
           >
             {measurement.euclidean.toFixed(1)} µm
@@ -92,7 +95,7 @@ function MeasurementViz({
             [a.x, a.y, a.z],
             [b.x, b.y, b.z],
           ]}
-          color="#e74c3c"
+          color="#e05252"
           lineWidth={2}
         />
         <Line
@@ -100,7 +103,7 @@ function MeasurementViz({
             [b.x, b.y, b.z],
             [c.x, c.y, c.z],
           ]}
-          color="#e74c3c"
+          color="#e05252"
           lineWidth={2}
         />
         <Html
@@ -110,12 +113,15 @@ function MeasurementViz({
         >
           <div
             style={{
-              background: "rgba(0,0,0,0.8)",
-              color: "#e74c3c",
-              padding: "2px 6px",
+              background: "rgba(7,13,26,0.85)",
+              color: "#e05252",
+              padding: "2px 8px",
               borderRadius: 4,
               fontSize: 11,
               whiteSpace: "nowrap",
+              border: "1px solid rgba(224,82,82,0.3)",
+              fontFamily: "ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace",
+              fontVariantNumeric: "tabular-nums",
             }}
           >
             {measurement.degrees.toFixed(1)}°

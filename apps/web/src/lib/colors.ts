@@ -1,14 +1,17 @@
 import { Color } from "three";
 
-/** SWC type code → hex color string */
+/** SWC type code → hex color string (desaturated scientific palette) */
 export const TYPE_COLORS: Record<number, string> = {
-  1: "#e74c3c", // soma
-  2: "#3498db", // axon
-  3: "#2ecc71", // basal dendrite
-  4: "#9b59b6", // apical dendrite
+  1: "#e05252", // soma
+  2: "#4a9eda", // axon
+  3: "#52b788", // basal dendrite
+  4: "#b07ec8", // apical dendrite
+  5: "#f4a261", // custom 5
+  6: "#e9c46a", // custom 6
+  7: "#a8c8a0", // custom 7
 };
 
-const DEFAULT_COLOR = "#95a5a6";
+const DEFAULT_COLOR = "#7b8fa6";
 
 /** SWC type code → human-readable label */
 export const TYPE_LABELS: Record<number, string> = {

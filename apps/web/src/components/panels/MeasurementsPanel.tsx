@@ -42,7 +42,7 @@ export default function MeasurementsPanel() {
                     <span className="text-text-muted ml-1">
                       #{m.nodeA} → #{m.nodeB}
                     </span>
-                    <p className="text-text mt-0.5">
+                    <p className="text-text numeric mt-0.5">
                       Euclidean: {m.euclidean.toFixed(2)} µm
                       {m.path !== null && (
                         <> | Path: {m.path.toFixed(2)} µm</>
@@ -55,7 +55,7 @@ export default function MeasurementsPanel() {
                     <span className="text-text-muted ml-1">
                       #{m.nodeA}-#{m.nodeB}-#{m.nodeC}
                     </span>
-                    <p className="text-text mt-0.5">{m.degrees.toFixed(1)}°</p>
+                    <p className="text-text numeric mt-0.5">{m.degrees.toFixed(1)}°</p>
                   </>
                 )}
               </div>

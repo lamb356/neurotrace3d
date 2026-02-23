@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0a0a;
-  --color-surface: #141414;
-  --color-surface-hover: #1e1e1e;
-  --color-border: #2a2a2a;
+  --color-bg: #070d1a;
+  --color-surface: #0e1520;
+  --color-surface-hover: #162030;
+  --color-border: #1e2d42;
   --color-text: #e5e5e5;
-  --color-text-muted: #a0a0a0;
-  --color-accent: #3b82f6;
-  --color-accent-hover: #60a5fa;
-  --color-canvas-bg: #0a0a0a;
+  --color-text-muted: #5a7896;
+  --color-accent: #2980b9;
+  --color-accent-hover: #3498db;
+  --color-canvas-bg: #070d1a;
 
-  /* SWC neurite type colors */
-  --color-soma: #e74c3c;
-  --color-axon: #3498db;
-  --color-basal: #2ecc71;
-  --color-apical: #9b59b6;
-  --color-unknown: #95a5a6;
+  /* SWC neurite type colors (desaturated scientific palette) */
+  --color-soma: #e05252;
+  --color-axon: #4a9eda;
+  --color-basal: #52b788;
+  --color-apical: #b07ec8;
+  --color-unknown: #7b8fa6;
 }
 
 html {
@@ -38,4 +38,9 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+.numeric {
+  font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', monospace;
+  font-variant-numeric: tabular-nums;
 }
