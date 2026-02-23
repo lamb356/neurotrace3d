@@ -1,6 +1,8 @@
-# NeuroTrace3D — Phase 1 Progress
+# NeuroTrace3D — Progress
 
-## Week 1: Monorepo + SWC Parser
+## Phase 1: Monorepo + SWC Parser + Core Viewer (Complete)
+
+### Week 1: Monorepo + SWC Parser
 
 - [x] Scaffold Turborepo monorepo with pnpm workspaces
 - [x] Root config: turbo.json, tsconfig.json, pnpm-workspace.yaml
@@ -23,7 +25,7 @@
 - [x] pnpm typecheck — no TypeScript errors
 - [x] pnpm test — all 32 tests pass
 
-## Weeks 2-3: Core 3D Viewer
+### Weeks 2-3: Core 3D Viewer
 
 - [x] Next.js 16 app shell with Tailwind CSS 4 (App Router, Turbopack)
 - [x] TypeScript strict, workspace dep on @neurotrace/swc-parser
@@ -48,8 +50,62 @@
 - [x] pnpm build — production build succeeds
 - [x] pnpm typecheck — no TypeScript errors
 
-## Week 4: Polish + Deploy
+## Phase 2: Editing & Proofreading (Complete)
 
-- [ ] Performance optimization for large morphologies
-- [ ] Measurement tools
-- [ ] Documentation and deployment
+### Step 1: Zustand Store Migration (Commit 9)
+
+- [x] Install zustand + immer
+- [x] Create store/types.ts — NeuronState, NeuronActions interfaces
+- [x] Create store/derived.ts — recomputeDerived(), toParseResult() helpers
+- [x] Create store/useNeuronStore.ts — Zustand store with Immer middleware, enableMapSet()
+- [x] Migrate all 9 components from props to store selectors (zero prop drilling)
+- [x] NeuronCanvas: 8 props → 0 props
+- [x] focusTarget as plain {x,y,z} object in store (not Three.js Vector3)
+- [x] Delete useNeuronData.ts and useNeuronSelection.ts hooks
+- [x] pnpm typecheck — clean
+- [x] pnpm build — succeeds
+
+### Step 2: Undo/Redo System (Commit 10)
+
+- [x] Create store/operations.ts — TreeOp type, applyOpsToTree(), invertOps()
+- [x] TreeOp types: MOVE, DELETE, INSERT, RETYPE, RESIZE, REPARENT
+- [x] invertOps: reverses array, swaps before/after, flips INSERT↔DELETE
+- [x] Add history/future stacks to store (capped at 100)
+- [x] applyOps: apply ops, push to history, clear future, recomputeDerived
+- [x] undo: pop history, invert ops, apply, push to future
+- [x] redo: pop future, apply, push to history
+- [x] Ctrl+Z / Ctrl+Shift+Z keyboard shortcuts
+- [x] History cleared on file load
+- [x] pnpm typecheck — clean
+
+### Step 3: Node Edit Operations (Commit 11)
+
+- [x] Create store/editActions.ts — operation creators
+- [x] moveNode: MOVE op with before/after xyz
+- [x] deleteNodes: DELETE ops + REPARENT children, depth-sorted (leaves first)
+- [x] insertNode: INSERT new node + REPARENT child, auto-generated ID
+- [x] retypeNodes: RETYPE ops with before/after type
+- [x] reparentNode: REPARENT op with cycle detection
+- [x] selectSubtree: BFS via childIndex to select all descendants
+- [x] Create NodeDragger.tsx — R3F drag-to-move via pointer capture
+- [x] Delete key deletes selected nodes
+- [x] All ops grouped as single applyOps call (single undo step)
+- [x] pnpm typecheck — clean
+
+### Step 4: Toolbar + Context Menu + Export (Commit 12)
+
+- [x] Create Toolbar.tsx — tool buttons, undo/redo, export, node/selection counts
+- [x] Tool buttons: Select (V), Move (M), Insert (I), Delete (X)
+- [x] Active tool highlighted with accent color
+- [x] Undo/Redo buttons with disabled state
+- [x] Create RetypeDropdown.tsx — all 8 SWC types with color indicators
+- [x] Create ContextMenu.tsx — right-click menu with Retype, Delete, Select subtree, Center camera
+- [x] Context menu via CustomEvent from R3F to HTML overlay
+- [x] Create exportSWC.ts — serializeSWC() → Blob → download link
+- [x] Tool keyboard shortcuts: V/M/I/X (no modifier keys)
+- [x] Delete tool mode: click node to delete immediately
+- [x] ViewerContainer: toolbar slot above canvas
+- [x] activeTool state in store with setActiveTool action
+- [x] NodeDragger active only when Move tool selected
+- [x] pnpm typecheck — clean
+- [x] pnpm build — succeeds
