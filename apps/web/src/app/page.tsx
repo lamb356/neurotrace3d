@@ -122,6 +122,10 @@ export default function Home() {
           useNeuronStore.getState().setActiveTool("path-select");
           return;
         }
+        if (key === "e") {
+          useNeuronStore.getState().setActiveTool("extend");
+          return;
+        }
       }
     };
     window.addEventListener("keydown", handler);

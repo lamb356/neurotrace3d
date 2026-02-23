@@ -14,6 +14,7 @@ const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[
   { id: "measure-angle", label: "Angle", shortcut: "A" },
   { id: "box-select", label: "Box", shortcut: "B" },
   { id: "path-select", label: "Path", shortcut: "P" },
+  { id: "extend", label: "Extend", shortcut: "E" },
 ];
 
 export default function Toolbar() {

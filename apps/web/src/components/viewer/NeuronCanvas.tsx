@@ -9,6 +9,7 @@ import ScreenshotHelper from "./ScreenshotHelper";
 import MeasurementOverlay from "./MeasurementOverlay";
 import ShollSpheres from "./ShollSpheres";
 import BoxSelector from "./BoxSelector";
+import BranchExtender from "./BranchExtender";
 
 export default function NeuronCanvas() {
   const hasNodes = useNeuronStore((s) => s.tree.size > 0);
@@ -30,6 +31,7 @@ export default function NeuronCanvas() {
       {hasNodes && <NeuronRenderer />}
       {hasNodes && activeTool === "move" && <NodeDragger />}
       {hasNodes && activeTool === "box-select" && <BoxSelector />}
+      {hasNodes && activeTool === "extend" && <BranchExtender />}
       {hasNodes && <MeasurementOverlay />}
       {hasNodes && <ShollSpheres />}
     </Canvas>
