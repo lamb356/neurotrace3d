@@ -34,7 +34,7 @@ interface ContextMenuState {
 
 type SidebarTab = "upload" | "browse";
 
-export default function Home() {
+export default function ViewerPage() {
   const hasData = useNeuronStore((s) => s.tree.size > 0);
   const error = useNeuronStore((s) => s.error);
   const clearSelection = useNeuronStore((s) => s.clearSelection);
