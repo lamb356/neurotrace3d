@@ -44,6 +44,10 @@ export interface NeuronState {
   source: "local" | "neuromorpho" | null;
   neuromorphoMeta: NeuromorphoNeuron | null;
 
+  // Sholl
+  showShollSpheres: boolean;
+  shollRadiusStep: number;
+
   // UI
   loading: boolean;
   error: string | null;
@@ -83,6 +87,10 @@ export interface NeuronActions {
   addMeasurePending(id: number): void;
   clearMeasurements(): void;
   removeMeasurement(index: number): void;
+
+  // Sholl
+  setShowShollSpheres(show: boolean): void;
+  setShollRadiusStep(step: number): void;
 }
 
 export type NeuronStore = NeuronState & NeuronActions;

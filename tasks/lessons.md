@@ -18,3 +18,8 @@
 - Skip scouting after first session — you already know the codebase
 - If something fails for 5+ minutes, stop and try a different approach
 - Don't waste context on agent report file I/O struggles
+
+## Codex Sub-Agents
+- Codex MCP sub-agents are unreliable for monorepo builds — they can't navigate pnpm workspaces well
+- Prefer Claude native sub-agents (kraken, spark, implementer) for implementation tasks
+- Codex works fine for isolated, single-file tasks but struggles with cross-package dependencies

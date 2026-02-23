@@ -37,6 +37,8 @@ const initialState = {
   measurePending: [] as number[],
   source: null,
   neuromorphoMeta: null,
+  showShollSpheres: false,
+  shollRadiusStep: 10,
   loading: false,
   error: null,
 };
@@ -308,6 +310,18 @@ export const useNeuronStore = create<NeuronStore>()(
     removeMeasurement(index: number) {
       set((state) => {
         state.measurements.splice(index, 1);
+      });
+    },
+
+    setShowShollSpheres(show: boolean) {
+      set((state) => {
+        state.showShollSpheres = show;
+      });
+    },
+
+    setShollRadiusStep(step: number) {
+      set((state) => {
+        state.shollRadiusStep = step;
       });
     },
   })),
