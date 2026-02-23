@@ -44,6 +44,9 @@ importers:
       postprocessing:
         specifier: ^6.38.3
         version: 6.38.3(three@0.183.1)
+      quickhull3d:
+        specifier: ^3.1.2
+        version: 3.1.2
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -1111,8 +1114,26 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  get-plane-normal@1.0.0:
+    resolution: {integrity: sha512-MUtCvFQCerkHvH97PyZ6IzUzxrJbkie7CA8oB/065l6Ui7UUq3JwiEMzXRasY0AotKmlj8/RieDDwvs9jLr+Sw==}
+
   get-tsconfig@4.13.6:
     resolution: {integrity: sha512-shZT/QMiSHc/YBLxxOkMtgSid5HFoauqCE3/exfsEcwg1WkeqjG+V40yBbBrsD+jW2HDXcs28xOfcbm2jI8Ddw==}
+
+  gl-mat3@1.0.0:
+    resolution: {integrity: sha512-obeEq9y7xaDoVkwMGJNL1upwpYlPJiXJFhREaNytMqUdfHKHNna9HvImmLV8F8Ys6QOYwPPddptZNoiiec/XOg==}
+
+  gl-mat4@1.2.0:
+    resolution: {integrity: sha512-sT5C0pwB1/e9G9AvAoLsoaJtbMGjfd/jfxo8jMCKqYYEnjZuFvqV5rehqar0538EmssjdDeiEWnKyBSTw7quoA==}
+
+  gl-quat@1.0.0:
+    resolution: {integrity: sha512-Pv9yvjJgQN85EbE79S+DF50ujxDkyjfYHIyXJcCRiimU1UxMY7vEHbVkj0IWLFaDndhfZT9vVOyfdMobLlrJsQ==}
+
+  gl-vec3@1.2.0:
+    resolution: {integrity: sha512-ynW7j5ZshRTHXG5UPC5u6G52cBCNx53LbNlq2HQ1bAosZbO4wOCEBufXS7KGiKL1slMgy4j/77Ikt+vMznouLg==}
+
+  gl-vec4@1.0.1:
+    resolution: {integrity: sha512-/gx5zzIy75JXzke4yuwcbvK+COWf8UJbVCUPvhfsYVw1GVey4Eextk/0H0ctXnOICruNK7+GS4ILQzEQcHcPEg==}
 
   glsl-noise@0.0.0:
     resolution: {integrity: sha512-b/ZCF6amfAUb7dJM/MxRs7AetQEahYzJ8PtgfrmEdtw6uyGOr+ZSGtgjFm6mfsBkxJ4d2W7kg+Nlqzqvn3Bc0w==}
@@ -1278,6 +1299,9 @@ packages:
   mlly@1.8.0:
     resolution: {integrity: sha512-l8D9ODSRWLe2KHJSifWGwBqpTZXIXTeo8mlKjY+E2HAakaTeNpqAyBZ8GSqLzHgw4XmHmC8whvpjJNMbFZN7/g==}
 
+  monotone-convex-hull-2d@1.0.1:
+    resolution: {integrity: sha512-ixQ3qdXTVHvR7eAoOjKY8kGxl9YjOFtzi7qOjwmFFPfBqZHVOjUFOBy/Dk9dusamRSPJe9ggyfSypRbs0Bl8BA==}
+
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -1351,6 +1375,9 @@ packages:
   pkg-types@1.3.1:
     resolution: {integrity: sha512-/Jm5M4RvtBFVkKWRu2BLUTNP8/M2a+UwuAX+ae4770q1qVGtfjG+WTCupoZixokjmHiry8uI+dlY8KXYV5HVVQ==}
 
+  point-line-distance@1.0.1:
+    resolution: {integrity: sha512-20FaXAqnX4IISI9PRPddGZWjLxS6PmkODBEuKz6m7bYqbVSQvScD5VUAbe+ziCBOg3eoK4h7huinvcPzOUEdXw==}
+
   postcss-load-config@6.0.1:
     resolution: {integrity: sha512-oPtTM4oerL+UXmx+93ytZVN82RrlY/wPUV8IeDxFrzIjXOLF1pN+EmKPLbubvKHT2HC20xXsCAH2Z+CKV6Oz/g==}
     engines: {node: '>= 18'}
@@ -1387,6 +1414,9 @@ packages:
 
   promise-worker-transferable@1.0.4:
     resolution: {integrity: sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==}
+
+  quickhull3d@3.1.2:
+    resolution: {integrity: sha512-PEoALuuLYI4pdvzH9K+PG8y1xZ9q6a350ahjKfezWHGyaOTuYK+lCCyBIFMOA1bnoTMFeQANlP6R2PmhjoUKQw==}
 
   react-dom@19.2.4:
     resolution: {integrity: sha512-AXJdLo8kgMbimY95O2aKQqsz2iWi9jMgKJhRBAxECE4IFxfcazB2LmzloIoibJI3C12IlY20+KFaLv+71bUJeQ==}
@@ -1454,6 +1484,18 @@ packages:
 
   resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
+
+  robust-orientation@1.2.1:
+    resolution: {integrity: sha512-FuTptgKwY6iNuU15nrIJDLjXzCChWB+T4AvksRtwPS/WZ3HuP1CElCm1t+OBfgQKfWbtZIawip+61k7+buRKAg==}
+
+  robust-scale@1.0.2:
+    resolution: {integrity: sha512-jBR91a/vomMAzazwpsPTPeuTPPmWBacwA+WYGNKcRGSh6xweuQ2ZbjRZ4v792/bZOhRKXRiQH0F48AvuajY0tQ==}
+
+  robust-subtract@1.0.0:
+    resolution: {integrity: sha512-xhKUno+Rl+trmxAIVwjQMiVdpF5llxytozXJOdoT4eTIqmqsndQqFb1A0oiW3sZGlhMRhOi6pAD4MF1YYW6o/A==}
+
+  robust-sum@1.0.0:
+    resolution: {integrity: sha512-AvLExwpaqUqD1uwLU6MwzzfRdaI6VEZsyvQ3IAQ0ZJ08v1H+DTyqskrf2ZJyh0BDduFVLN7H04Zmc+qTiahhAw==}
 
   rollup@4.59.0:
     resolution: {integrity: sha512-2oMpl67a3zCH9H79LeMcbDhXW/UmWG/y2zuqnF2jQq5uq9TbM9TVyXvA4+t+ne2IIkBdrLpAaRQAvo7YI/Yyeg==}
@@ -1667,6 +1709,12 @@ packages:
   turbo@2.8.10:
     resolution: {integrity: sha512-OxbzDES66+x7nnKGg2MwBA1ypVsZoDTLHpeaP4giyiHSixbsiTaMyeJqbEyvBdp5Cm28fc+8GG6RdQtic0ijwQ==}
     hasBin: true
+
+  two-product@1.0.2:
+    resolution: {integrity: sha512-vOyrqmeYvzjToVM08iU52OFocWT6eB/I5LUWYnxeAPGXAhAxXYU/Yr/R2uY5/5n4bvJQL9AQulIuxpIsMoT8XQ==}
+
+  two-sum@1.0.0:
+    resolution: {integrity: sha512-phP48e8AawgsNUjEY2WvoIWqdie8PoiDZGxTDv70LDr01uX5wLEQbOgSP7Z/B6+SW5oLtbe8qaYX2fKJs3CGTw==}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -2588,9 +2636,27 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  get-plane-normal@1.0.0:
+    dependencies:
+      gl-vec3: 1.2.0
+
   get-tsconfig@4.13.6:
     dependencies:
       resolve-pkg-maps: 1.0.0
+
+  gl-mat3@1.0.0: {}
+
+  gl-mat4@1.2.0: {}
+
+  gl-quat@1.0.0:
+    dependencies:
+      gl-mat3: 1.0.0
+      gl-vec3: 1.2.0
+      gl-vec4: 1.0.1
+
+  gl-vec3@1.2.0: {}
+
+  gl-vec4@1.0.1: {}
 
   glsl-noise@0.0.0: {}
 
@@ -2713,6 +2779,10 @@ snapshots:
       pkg-types: 1.3.1
       ufo: 1.6.3
 
+  monotone-convex-hull-2d@1.0.1:
+    dependencies:
+      robust-orientation: 1.2.1
+
   ms@2.1.3: {}
 
   mz@2.7.0:
@@ -2777,6 +2847,10 @@ snapshots:
       mlly: 1.8.0
       pathe: 2.0.3
 
+  point-line-distance@1.0.1:
+    dependencies:
+      gl-vec3: 1.2.0
+
   postcss-load-config@6.0.1(jiti@2.6.1)(postcss@8.5.6)(tsx@4.21.0):
     dependencies:
       lilconfig: 3.1.3
@@ -2807,6 +2881,18 @@ snapshots:
     dependencies:
       is-promise: 2.2.2
       lie: 3.3.0
+
+  quickhull3d@3.1.2:
+    dependencies:
+      debug: 4.4.3
+      get-plane-normal: 1.0.0
+      gl-mat4: 1.2.0
+      gl-quat: 1.0.0
+      gl-vec4: 1.0.1
+      monotone-convex-hull-2d: 1.0.1
+      point-line-distance: 1.0.1
+    transitivePeerDependencies:
+      - supports-color
 
   react-dom@19.2.4(react@19.2.4):
     dependencies:
@@ -2867,6 +2953,22 @@ snapshots:
   resolve-from@5.0.0: {}
 
   resolve-pkg-maps@1.0.0: {}
+
+  robust-orientation@1.2.1:
+    dependencies:
+      robust-scale: 1.0.2
+      robust-subtract: 1.0.0
+      robust-sum: 1.0.0
+      two-product: 1.0.2
+
+  robust-scale@1.0.2:
+    dependencies:
+      two-product: 1.0.2
+      two-sum: 1.0.0
+
+  robust-subtract@1.0.0: {}
+
+  robust-sum@1.0.0: {}
 
   rollup@4.59.0:
     dependencies:
@@ -3116,6 +3218,10 @@ snapshots:
       turbo-linux-arm64: 2.8.10
       turbo-windows-64: 2.8.10
       turbo-windows-arm64: 2.8.10
+
+  two-product@1.0.2: {}
+
+  two-sum@1.0.0: {}
 
   typescript@5.9.3: {}
 

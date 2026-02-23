@@ -11,6 +11,7 @@ import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
 import MeasurementsPanel from "@/components/panels/MeasurementsPanel";
 import ShollPanel from "@/components/panels/ShollPanel";
 import DendrogramPanel from "@/components/panels/DendrogramPanel";
+import MorphometricsPanel from "@/components/panels/MorphometricsPanel";
 import Toolbar from "@/components/toolbar/Toolbar";
 import ContextMenu from "@/components/viewer/ContextMenu";
 import NeuromorphoBrowser from "@/components/neuromorpho/NeuromorphoBrowser";
@@ -269,6 +270,7 @@ export default function ViewerPage() {
               </div>
             )}
             <StatsPanel />
+            <MorphometricsPanel />
             <MetadataPanel />
             <NodeInfoPanel />
             <MeasurementsPanel />
