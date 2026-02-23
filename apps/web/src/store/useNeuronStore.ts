@@ -43,7 +43,7 @@ const initialState = {
   source: null,
   neuromorphoMeta: null,
   showMinimap: false,
-  postProcessing: true,
+  postProcessing: "low" as const,
   showShollSpheres: false,
   shollRadiusStep: 10,
   loading: false,
@@ -420,9 +420,9 @@ export const useNeuronStore = create<NeuronStore>()(
       });
     },
 
-    setPostProcessing(enabled: boolean) {
+    setPostProcessing(level) {
       set((state) => {
-        state.postProcessing = enabled;
+        state.postProcessing = level;
       });
     },
 

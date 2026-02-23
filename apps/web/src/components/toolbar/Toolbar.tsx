@@ -139,12 +139,15 @@ export default function Toolbar() {
         onClick={() => useNeuronStore.getState().setShowMinimap(!showMinimap)}
       />
 
-      {/* Post-processing toggle */}
+      {/* Post-processing quality */}
       <ToolButton
         icon="FX"
-        label="Toggle post-processing (disable for performance)"
-        active={postProcessing}
-        onClick={() => useNeuronStore.getState().setPostProcessing(!postProcessing)}
+        label={`FX: ${postProcessing === "off" ? "Off" : postProcessing === "low" ? "Low" : "High"} (click to cycle)`}
+        active={postProcessing !== "off"}
+        onClick={() => {
+          const next = postProcessing === "off" ? "low" : postProcessing === "low" ? "high" : "off";
+          useNeuronStore.getState().setPostProcessing(next);
+        }}
       />
 
       <Divider />

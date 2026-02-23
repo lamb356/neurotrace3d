@@ -59,7 +59,7 @@ export interface NeuronState {
   showMinimap: boolean;
 
   // Post-processing
-  postProcessing: boolean;
+  postProcessing: "off" | "low" | "high";
 
   // UI
   loading: boolean;
@@ -119,7 +119,7 @@ export interface NeuronActions {
   setShowMinimap(show: boolean): void;
 
   // Post-processing
-  setPostProcessing(enabled: boolean): void;
+  setPostProcessing(level: NeuronState["postProcessing"]): void;
 
   // Sholl
   setShowShollSpheres(show: boolean): void;
