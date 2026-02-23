@@ -33,7 +33,7 @@ export async function GET(
   }
 
   const neuron = await metaRes.json();
-  const archive: string = neuron.archive;
+  const archive: string = (neuron.archive ?? "").toLowerCase();
   if (!archive) {
     return Response.json(
       { error: "Neuron has no archive field" },
