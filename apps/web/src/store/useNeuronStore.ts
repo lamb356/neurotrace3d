@@ -11,6 +11,8 @@ import {
   createInsertOps,
   createRetypeOps,
   createReparentOps,
+  createPruneOps,
+  createAppendNodeOps,
 } from "./editActions";
 import { euclideanDistance, pathDistance, branchAngle, findPath } from "@/lib/measurements";
 
@@ -33,6 +35,7 @@ const initialState = {
   history: [],
   future: [],
   activeTool: "select" as const,
+  extendingFrom: null,
   measurements: [] as import("./types").Measurement[],
   measurePending: [] as number[],
   source: null,
@@ -71,6 +74,7 @@ export const useNeuronStore = create<NeuronStore>()(
           state.neuromorphoMeta = null;
           state.measurements = [];
           state.measurePending = [];
+          state.extendingFrom = null;
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -237,6 +241,43 @@ export const useNeuronStore = create<NeuronStore>()(
       if (ops.length > 0) useNeuronStore.getState().applyOps(ops);
     },
 
+    pruneSubtree(rootId) {
+      const state = useNeuronStore.getState();
+      const ops = createPruneOps(state, rootId);
+      if (ops.length > 0) state.applyOps(ops);
+    },
+
+    startExtend(tipId) {
+      set((state) => {
+        // Verify it's a tip (no children)
+        const children = state.childIndex.get(tipId) ?? [];
+        if (children.length > 0) return;
+        state.extendingFrom = tipId;
+        state.selection = new Set([tipId]);
+      });
+    },
+
+    placeExtendNode(position) {
+      const state = useNeuronStore.getState();
+      if (state.extendingFrom === null) return;
+      const ops = createAppendNodeOps(state.tree, state.extendingFrom, position);
+      if (ops.length === 0) return;
+      // The new node ID is in the INSERT op
+      const newId = ops[0].nodeId;
+      state.applyOps(ops);
+      // Update extendingFrom to the new node so we chain from it
+      set((s) => {
+        s.extendingFrom = newId;
+        s.selection = new Set([newId]);
+      });
+    },
+
+    stopExtend() {
+      set((state) => {
+        state.extendingFrom = null;
+      });
+    },
+
     selectSubtree(rootId) {
       set((state) => {
         const ids = new Set<number>([rootId]);
@@ -257,6 +298,7 @@ export const useNeuronStore = create<NeuronStore>()(
       set((state) => {
         state.activeTool = tool;
         state.measurePending = [];
+        state.extendingFrom = null;
       });
     },
 

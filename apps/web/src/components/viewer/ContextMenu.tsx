@@ -42,6 +42,23 @@ export default function ContextMenu({ nodeId, x, y, onClose }: ContextMenuProps)
     onClose();
   };
 
+  const handlePruneSubtree = () => {
+    const state = useNeuronStore.getState();
+    // Count subtree nodes via BFS
+    let count = 0;
+    const queue = [nodeId];
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      count++;
+      const children = state.childIndex.get(current) ?? [];
+      for (const childId of children) queue.push(childId);
+    }
+    if (window.confirm(`Prune subtree rooted at #${nodeId}? (${count} node${count !== 1 ? "s" : ""} will be deleted)`)) {
+      state.pruneSubtree(nodeId);
+    }
+    onClose();
+  };
+
   const handleSelectSubtree = () => {
     useNeuronStore.getState().selectSubtree(nodeId);
     onClose();
@@ -85,6 +102,14 @@ export default function ContextMenu({ nodeId, x, y, onClose }: ContextMenuProps)
           onClick={handleDelete}
         >
           Delete
+        </button>
+
+        {/* Prune subtree */}
+        <button
+          className="hover:bg-surface-hover w-full px-3 py-1.5 text-left text-xs text-red-400"
+          onClick={handlePruneSubtree}
+        >
+          Prune subtree
         </button>
 
         {/* Select subtree */}

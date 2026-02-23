@@ -161,6 +161,79 @@ export function createReparentOps(
   ];
 }
 
+/** Create ops to append a new child node to a parent */
+export function createAppendNodeOps(
+  tree: Map<number, SWCNode>,
+  parentId: number,
+  position: { x: number; y: number; z: number },
+): TreeOp[] {
+  const parent = tree.get(parentId);
+  if (!parent) return [];
+
+  let maxId = 0;
+  for (const id of tree.keys()) {
+    if (id > maxId) maxId = id;
+  }
+  const newId = maxId + 1;
+
+  const newNode: SWCNode = {
+    id: newId,
+    type: parent.type,
+    x: position.x,
+    y: position.y,
+    z: position.z,
+    radius: Math.max(parent.radius, 0.5),
+    parentId,
+  };
+
+  return [
+    {
+      type: "INSERT",
+      nodeId: newId,
+      before: {},
+      after: { ...newNode },
+      nodeSnapshot: newNode,
+    },
+  ];
+}
+
+/** Create ops to prune an entire subtree (no reparenting) */
+export function createPruneOps(
+  state: NeuronState,
+  rootId: number,
+): TreeOp[] {
+  const ops: TreeOp[] = [];
+
+  // BFS to collect all subtree node IDs
+  const subtreeIds: number[] = [rootId];
+  const queue = [rootId];
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    const children = state.childIndex.get(current) ?? [];
+    for (const childId of children) {
+      subtreeIds.push(childId);
+      queue.push(childId);
+    }
+  }
+
+  // Sort by depth (leaves first) to avoid parent-before-child issues
+  subtreeIds.sort((a, b) => getDepth(state.tree, b) - getDepth(state.tree, a));
+
+  for (const id of subtreeIds) {
+    const node = state.tree.get(id);
+    if (!node) continue;
+    ops.push({
+      type: "DELETE",
+      nodeId: id,
+      before: {},
+      after: {},
+      nodeSnapshot: { ...node },
+    });
+  }
+
+  return ops;
+}
+
 /** Get depth of a node in the tree */
 function getDepth(tree: Map<number, SWCNode>, id: number): number {
   let depth = 0;

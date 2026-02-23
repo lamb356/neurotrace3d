@@ -34,7 +34,10 @@ export interface NeuronState {
   future: TreeOp[][];
 
   // Tool
-  activeTool: "select" | "move" | "insert" | "delete" | "measure-distance" | "measure-angle" | "box-select" | "path-select";
+  activeTool: "select" | "move" | "insert" | "delete" | "measure-distance" | "measure-angle" | "box-select" | "path-select" | "extend";
+
+  // Extend mode
+  extendingFrom: number | null;
 
   // Measurements
   measurements: Measurement[];
@@ -80,8 +83,14 @@ export interface NeuronActions {
   insertNode(parentId: number, childId: number, position: { x: number; y: number; z: number }): void;
   retypeNodes(ids: number[], newType: number): void;
   reparentNode(id: number, newParentId: number): void;
+  pruneSubtree(rootId: number): void;
   selectSubtree(rootId: number): void;
   setActiveTool(tool: NeuronState["activeTool"]): void;
+
+  // Extend
+  startExtend(tipId: number): void;
+  placeExtendNode(position: { x: number; y: number; z: number }): void;
+  stopExtend(): void;
 
   // Measurements
   addMeasurePending(id: number): void;
