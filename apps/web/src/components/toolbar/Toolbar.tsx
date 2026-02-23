@@ -10,6 +10,8 @@ const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[
   { id: "move", label: "Move", shortcut: "M" },
   { id: "insert", label: "Insert", shortcut: "I" },
   { id: "delete", label: "Delete", shortcut: "X" },
+  { id: "measure-distance", label: "Distance", shortcut: "D" },
+  { id: "measure-angle", label: "Angle", shortcut: "A" },
 ];
 
 export default function Toolbar() {
@@ -19,6 +21,7 @@ export default function Toolbar() {
   const futureLen = useNeuronStore((s) => s.future.length);
   const nodeCount = useNeuronStore((s) => s.tree.size);
   const selectionCount = useNeuronStore((s) => s.selection.size);
+  const measureCount = useNeuronStore((s) => s.measurements.length);
 
   const handleUndo = () => useNeuronStore.getState().undo();
   const handleRedo = () => useNeuronStore.getState().redo();
@@ -43,6 +46,16 @@ export default function Toolbar() {
           </button>
         ))}
       </div>
+
+      {measureCount > 0 && (
+        <button
+          className="text-text-muted hover:bg-surface-hover hover:text-text rounded px-2 py-1 text-xs transition-colors"
+          onClick={() => useNeuronStore.getState().clearMeasurements()}
+          title="Clear all measurements"
+        >
+          Clear ({measureCount})
+        </button>
+      )}
 
       <div className="bg-border mx-2 h-5 w-px" />
 

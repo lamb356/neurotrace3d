@@ -7,6 +7,10 @@ import type {
 import type { TreeOp } from "./operations";
 import type { NeuromorphoNeuron } from "@/lib/neuromorpho-types";
 
+export type Measurement =
+  | { kind: "distance"; nodeA: number; nodeB: number; euclidean: number; path: number | null }
+  | { kind: "angle"; nodeA: number; nodeB: number; nodeC: number; degrees: number };
+
 export interface NeuronState {
   // Tree data
   tree: Map<number, SWCNode>;
@@ -30,7 +34,11 @@ export interface NeuronState {
   future: TreeOp[][];
 
   // Tool
-  activeTool: "select" | "move" | "insert" | "delete";
+  activeTool: "select" | "move" | "insert" | "delete" | "measure-distance" | "measure-angle";
+
+  // Measurements
+  measurements: Measurement[];
+  measurePending: number[];
 
   // Source
   source: "local" | "neuromorpho" | null;
@@ -70,6 +78,11 @@ export interface NeuronActions {
   reparentNode(id: number, newParentId: number): void;
   selectSubtree(rootId: number): void;
   setActiveTool(tool: NeuronState["activeTool"]): void;
+
+  // Measurements
+  addMeasurePending(id: number): void;
+  clearMeasurements(): void;
+  removeMeasurement(index: number): void;
 }
 
 export type NeuronStore = NeuronState & NeuronActions;

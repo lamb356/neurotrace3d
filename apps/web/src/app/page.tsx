@@ -8,6 +8,7 @@ import StatsPanel from "@/components/panels/StatsPanel";
 import WarningsPanel from "@/components/panels/WarningsPanel";
 import MetadataPanel from "@/components/panels/MetadataPanel";
 import NodeInfoPanel from "@/components/panels/NodeInfoPanel";
+import MeasurementsPanel from "@/components/panels/MeasurementsPanel";
 import Toolbar from "@/components/toolbar/Toolbar";
 import ContextMenu from "@/components/viewer/ContextMenu";
 import NeuromorphoBrowser from "@/components/neuromorpho/NeuromorphoBrowser";
@@ -104,6 +105,14 @@ export default function Home() {
           useNeuronStore.getState().setActiveTool("delete");
           return;
         }
+        if (key === "d") {
+          useNeuronStore.getState().setActiveTool("measure-distance");
+          return;
+        }
+        if (key === "a") {
+          useNeuronStore.getState().setActiveTool("measure-angle");
+          return;
+        }
       }
     };
     window.addEventListener("keydown", handler);
@@ -172,6 +181,7 @@ export default function Home() {
             <StatsPanel />
             <MetadataPanel />
             <NodeInfoPanel />
+            <MeasurementsPanel />
             <WarningsPanel />
           </>
         }

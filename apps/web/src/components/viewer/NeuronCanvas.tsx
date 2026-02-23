@@ -6,6 +6,7 @@ import NeuronRenderer from "./NeuronRenderer";
 import CameraControls from "./CameraControls";
 import NodeDragger from "./NodeDragger";
 import ScreenshotHelper from "./ScreenshotHelper";
+import MeasurementOverlay from "./MeasurementOverlay";
 
 export default function NeuronCanvas() {
   const hasNodes = useNeuronStore((s) => s.tree.size > 0);
@@ -26,6 +27,7 @@ export default function NeuronCanvas() {
       <ScreenshotHelper />
       {hasNodes && <NeuronRenderer />}
       {hasNodes && activeTool === "move" && <NodeDragger />}
+      {hasNodes && <MeasurementOverlay />}
     </Canvas>
   );
 }

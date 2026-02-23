@@ -61,6 +61,12 @@ export default function NeuronRenderer() {
       return;
     }
 
+    // Measure tools: accumulate pending nodes
+    if (store.activeTool === "measure-distance" || store.activeTool === "measure-angle") {
+      store.addMeasurePending(nodeId);
+      return;
+    }
+
     // Select/other tools: normal selection
     if (shiftKey) {
       store.toggleSelection(nodeId);

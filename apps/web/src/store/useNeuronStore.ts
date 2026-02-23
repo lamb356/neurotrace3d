@@ -12,6 +12,7 @@ import {
   createRetypeOps,
   createReparentOps,
 } from "./editActions";
+import { euclideanDistance, pathDistance, branchAngle } from "@/lib/measurements";
 
 const MAX_HISTORY = 100;
 
@@ -32,6 +33,8 @@ const initialState = {
   history: [],
   future: [],
   activeTool: "select" as const,
+  measurements: [] as import("./types").Measurement[],
+  measurePending: [] as number[],
   source: null,
   neuromorphoMeta: null,
   loading: false,
@@ -64,6 +67,8 @@ export const useNeuronStore = create<NeuronStore>()(
           state.future = [];
           state.source = "local";
           state.neuromorphoMeta = null;
+          state.measurements = [];
+          state.measurePending = [];
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -249,6 +254,60 @@ export const useNeuronStore = create<NeuronStore>()(
     setActiveTool(tool) {
       set((state) => {
         state.activeTool = tool;
+        state.measurePending = [];
+      });
+    },
+
+    addMeasurePending(id: number) {
+      set((state) => {
+        // Don't add duplicates in sequence
+        if (state.measurePending.length > 0 && state.measurePending[state.measurePending.length - 1] === id) return;
+        state.measurePending.push(id);
+
+        const needed = state.activeTool === "measure-distance" ? 2 : 3;
+        if (state.measurePending.length >= needed) {
+          const ids = state.measurePending;
+          if (state.activeTool === "measure-distance") {
+            const a = state.tree.get(ids[0]);
+            const b = state.tree.get(ids[1]);
+            if (a && b) {
+              state.measurements.push({
+                kind: "distance",
+                nodeA: ids[0],
+                nodeB: ids[1],
+                euclidean: euclideanDistance(a, b),
+                path: pathDistance(state.tree, state.childIndex, ids[0], ids[1]),
+              });
+            }
+          } else {
+            const a = state.tree.get(ids[0]);
+            const b = state.tree.get(ids[1]);
+            const c = state.tree.get(ids[2]);
+            if (a && b && c) {
+              state.measurements.push({
+                kind: "angle",
+                nodeA: ids[0],
+                nodeB: ids[1],
+                nodeC: ids[2],
+                degrees: branchAngle(a, b, c),
+              });
+            }
+          }
+          state.measurePending = [];
+        }
+      });
+    },
+
+    clearMeasurements() {
+      set((state) => {
+        state.measurements = [];
+        state.measurePending = [];
+      });
+    },
+
+    removeMeasurement(index: number) {
+      set((state) => {
+        state.measurements.splice(index, 1);
       });
     },
   })),
