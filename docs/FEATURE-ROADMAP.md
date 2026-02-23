@@ -16,9 +16,9 @@
 - [x] 6. Validation warnings panel (clickable, flies camera to problem node)
 - [x] 7. Box selection tool (drag rectangle, frustum select)
 - [x] 8. Path selection tool (click two nodes, select path between)
-- [ ] 9. Branch split
-- [ ] 10. Branch prune (recursive delete subtree)
-- [ ] 11. Branch extend (click to add nodes sequentially)
+- [x] 9. Branch split
+- [x] 10. Branch prune (recursive delete subtree)
+- [x] 11. Branch extend (click to add nodes sequentially)
 
 ## Harder (2-4 hours each)
 - [ ] 12. Branch merge
