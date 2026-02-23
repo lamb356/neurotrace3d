@@ -4,6 +4,7 @@ import type {
   ParseWarning,
   MorphologyStats,
 } from "@neurotrace/swc-parser";
+import type { TreeOp } from "./operations";
 
 export interface NeuronState {
   // Tree data
@@ -22,6 +23,10 @@ export interface NeuronState {
 
   // Camera
   focusTarget: { x: number; y: number; z: number } | null;
+
+  // History
+  history: TreeOp[][];
+  future: TreeOp[][];
 
   // UI
   loading: boolean;
@@ -42,6 +47,11 @@ export interface NeuronActions {
   // Camera
   setFocusTarget(id: number): void;
   clearFocusTarget(): void;
+
+  // History
+  applyOps(ops: TreeOp[]): void;
+  undo(): void;
+  redo(): void;
 }
 
 export type NeuronStore = NeuronState & NeuronActions;

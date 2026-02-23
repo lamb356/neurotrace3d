@@ -24,10 +24,30 @@ export default function Home() {
   const error = useNeuronStore((s) => s.error);
   const clearSelection = useNeuronStore((s) => s.clearSelection);
 
-  // Escape key clears selection
+  // Global keyboard shortcuts
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") clearSelection();
+      // Don't handle shortcuts when typing in inputs
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+
+      if (e.key === "Escape") {
+        clearSelection();
+        return;
+      }
+
+      // Undo: Ctrl+Z
+      if (e.key === "z" && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+        e.preventDefault();
+        useNeuronStore.getState().undo();
+        return;
+      }
+
+      // Redo: Ctrl+Shift+Z
+      if (e.key === "z" && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+        e.preventDefault();
+        useNeuronStore.getState().redo();
+        return;
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);

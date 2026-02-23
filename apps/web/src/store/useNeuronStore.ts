@@ -4,6 +4,9 @@ import { enableMapSet } from "immer";
 import { parseSWC, computeStats, validateSWC } from "@neurotrace/swc-parser";
 import type { NeuronStore } from "./types";
 import { recomputeDerived } from "./derived";
+import { applyOpsToTree, invertOps } from "./operations";
+
+const MAX_HISTORY = 100;
 
 enableMapSet();
 
@@ -19,6 +22,8 @@ const initialState = {
   selection: new Set<number>(),
   hovered: null,
   focusTarget: null,
+  history: [],
+  future: [],
   loading: false,
   error: null,
 };
@@ -45,6 +50,8 @@ export const useNeuronStore = create<NeuronStore>()(
           state.selection = new Set();
           state.hovered = null;
           state.focusTarget = null;
+          state.history = [];
+          state.future = [];
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -120,6 +127,40 @@ export const useNeuronStore = create<NeuronStore>()(
     clearFocusTarget() {
       set((state) => {
         state.focusTarget = null;
+      });
+    },
+
+    applyOps(ops) {
+      if (ops.length === 0) return;
+      set((state) => {
+        applyOpsToTree(state.tree, ops);
+        state.history.push(ops);
+        if (state.history.length > MAX_HISTORY) {
+          state.history.shift();
+        }
+        state.future = [];
+        recomputeDerived(state);
+      });
+    },
+
+    undo() {
+      set((state) => {
+        const ops = state.history.pop();
+        if (!ops) return;
+        const inverted = invertOps(ops);
+        applyOpsToTree(state.tree, inverted);
+        state.future.push(ops);
+        recomputeDerived(state);
+      });
+    },
+
+    redo() {
+      set((state) => {
+        const ops = state.future.pop();
+        if (!ops) return;
+        applyOpsToTree(state.tree, ops);
+        state.history.push(ops);
+        recomputeDerived(state);
       });
     },
   })),
