@@ -109,3 +109,45 @@
 - [x] NodeDragger active only when Move tool selected
 - [x] pnpm typecheck — clean
 - [x] pnpm build — succeeds
+
+## Phase 3: NeuroMorpho.org Integration (Complete)
+
+### Step 1: API Proxy Routes (Commit 13)
+
+- [x] Create shared proxy helper with 5s timeout, AbortError→504, network→502
+- [x] Search/browse route: GET /api/neuromorpho/search with q, fq, page, size params
+- [x] Single neuron route: GET /api/neuromorpho/neuron/[name]
+- [x] SWC download route: GET /api/neuromorpho/swc/[name] with CNG→Source fallback
+- [x] Filter fields route: GET /api/neuromorpho/fields/[field]
+- [x] Shared TypeScript types: NeuromorphoNeuron, NeuromorphoPage, NeuromorphoSearchResult
+- [x] pnpm typecheck — clean
+- [x] pnpm build — succeeds
+
+### Step 2: NeuromorphoBrowser Component (Commit 14)
+
+- [x] NeuromorphoBrowser with text search, filter dropdowns, paginated results
+- [x] Filter options (species, brain_region, cell_type) fetched on mount
+- [x] Proper NeuroMorpho Solr query syntax: q + fq parameter separation
+- [x] NeuronCard with neuron name, species/region/cell_type, Load button
+- [x] Loading spinner on individual cards during SWC fetch
+- [x] Pagination with prev/next, page count, total results
+- [x] pnpm typecheck — clean
+
+### Step 3: Store Integration + Sidebar Tabs (Commit 15)
+
+- [x] Add loadFromNeuromorpho action to Zustand store
+- [x] Track source ("local" | "neuromorpho") and neuromorphoMeta in state
+- [x] loadSWC/loadFile set source to "local", clear neuromorphoMeta
+- [x] Sidebar tab toggle: File Upload | NeuroMorpho
+- [x] MetadataPanel shows archive, scientific name, stain, physical integrity for NeuroMorpho neurons
+- [x] pnpm typecheck — clean
+- [x] pnpm build — succeeds
+
+### Step 4: Featured Neurons + Landing Polish (Commit 16)
+
+- [x] 6 curated featured neurons: rat pyramidal, mouse Purkinje, human interneuron, retinal ganglion, drosophila motor, rat cortical
+- [x] All neuron names verified against NeuroMorpho.org API
+- [x] FeaturedNeurons grid component (2-col on desktop) with loading states
+- [x] Landing page: file upload → samples → featured neurons flow
+- [x] pnpm typecheck — clean
+- [x] pnpm build — succeeds
