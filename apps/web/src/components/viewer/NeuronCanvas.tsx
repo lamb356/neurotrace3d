@@ -20,7 +20,6 @@ export default function NeuronCanvas() {
     <Canvas
       frameloop="demand"
       gl={{ preserveDrawingBuffer: true }}
-      camera={{ fov: 50, near: 0.1, far: 100000 }}
       style={{ background: "var(--color-canvas-bg)" }}
       onPointerMissed={() => clearHover(null)}
     >

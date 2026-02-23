@@ -127,6 +127,22 @@ export default function Home() {
           useNeuronStore.getState().setActiveTool("extend");
           return;
         }
+        if (key === "1") {
+          useNeuronStore.getState().setCameraMode("perspective");
+          return;
+        }
+        if (key === "2") {
+          useNeuronStore.getState().setCameraMode("ortho-xy");
+          return;
+        }
+        if (key === "3") {
+          useNeuronStore.getState().setCameraMode("ortho-xz");
+          return;
+        }
+        if (key === "4") {
+          useNeuronStore.getState().setCameraMode("ortho-yz");
+          return;
+        }
       }
 
       // Arrow key navigation (no ctrl/meta/alt required, shift extends selection)

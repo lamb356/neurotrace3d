@@ -35,6 +35,7 @@ const initialState = {
   history: [],
   future: [],
   activeTool: "select" as const,
+  cameraMode: "perspective" as const,
   extendingFrom: null,
   navCursor: null,
   measurements: [] as import("./types").Measurement[],
@@ -77,6 +78,7 @@ export const useNeuronStore = create<NeuronStore>()(
           state.measurePending = [];
           state.extendingFrom = null;
           state.navCursor = null;
+          state.cameraMode = "perspective";
           state.loading = false;
           state.error = null;
         } catch (err) {
@@ -180,6 +182,12 @@ export const useNeuronStore = create<NeuronStore>()(
     clearFocusTarget() {
       set((state) => {
         state.focusTarget = null;
+      });
+    },
+
+    setCameraMode(mode) {
+      set((state) => {
+        state.cameraMode = mode;
       });
     },
 

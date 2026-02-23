@@ -5,6 +5,13 @@ import { exportSWC } from "@/lib/exportSWC";
 import type { NeuronState } from "@/store/types";
 import ThemeToggle from "@/components/ThemeToggle";
 
+const CAMERA_MODES: { id: NeuronState["cameraMode"]; label: string; shortcut: string }[] = [
+  { id: "perspective", label: "3D", shortcut: "1" },
+  { id: "ortho-xy", label: "XY", shortcut: "2" },
+  { id: "ortho-xz", label: "XZ", shortcut: "3" },
+  { id: "ortho-yz", label: "YZ", shortcut: "4" },
+];
+
 const TOOLS: { id: NeuronState["activeTool"]; label: string; shortcut: string }[] = [
   { id: "select", label: "Select", shortcut: "V" },
   { id: "move", label: "Move", shortcut: "M" },
@@ -25,6 +32,7 @@ export default function Toolbar() {
   const nodeCount = useNeuronStore((s) => s.tree.size);
   const selectionCount = useNeuronStore((s) => s.selection.size);
   const measureCount = useNeuronStore((s) => s.measurements.length);
+  const cameraMode = useNeuronStore((s) => s.cameraMode);
 
   const handleUndo = () => useNeuronStore.getState().undo();
   const handleRedo = () => useNeuronStore.getState().redo();
@@ -106,6 +114,26 @@ export default function Toolbar() {
 
       {/* Theme Toggle */}
       <ThemeToggle />
+
+      <div className="bg-border mx-2 h-5 w-px" />
+
+      {/* Camera mode buttons */}
+      <div className="flex gap-1">
+        {CAMERA_MODES.map((mode) => (
+          <button
+            key={mode.id}
+            className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
+              cameraMode === mode.id
+                ? "bg-accent text-white"
+                : "text-text-muted hover:bg-surface-hover hover:text-text"
+            }`}
+            onClick={() => useNeuronStore.getState().setCameraMode(mode.id)}
+            title={`${mode.label} view (${mode.shortcut})`}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
 
       {/* Spacer */}
       <div className="flex-1" />

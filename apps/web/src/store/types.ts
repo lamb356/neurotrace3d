@@ -28,6 +28,7 @@ export interface NeuronState {
 
   // Camera
   focusTarget: { x: number; y: number; z: number } | null;
+  cameraMode: "perspective" | "ortho-xy" | "ortho-xz" | "ortho-yz";
 
   // History
   history: TreeOp[][];
@@ -74,6 +75,7 @@ export interface NeuronActions {
   // Camera
   setFocusTarget(id: number): void;
   clearFocusTarget(): void;
+  setCameraMode(mode: NeuronState["cameraMode"]): void;
 
   // History
   applyOps(ops: TreeOp[]): void;
