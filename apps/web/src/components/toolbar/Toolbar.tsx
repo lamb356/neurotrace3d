@@ -2,6 +2,8 @@
 
 import { useNeuronStore } from "@/store/useNeuronStore";
 import { exportSWC } from "@/lib/exportSWC";
+import { exportToSVG, downloadSVG } from "@/lib/svgExport";
+import { mainCameraRef } from "@/lib/mainCameraRef";
 import type { NeuronState } from "@/store/types";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -132,6 +134,29 @@ export default function Toolbar() {
         icon="📷"
         label="Screenshot"
         onClick={() => window.dispatchEvent(new CustomEvent("take-screenshot"))}
+      />
+      <ToolButton
+        icon="SV"
+        label="Export SVG"
+        onClick={() => {
+          const cam = mainCameraRef.current;
+          if (!cam) return;
+          const { tree, childIndex, fileName } = useNeuronStore.getState();
+          if (tree.size === 0) return;
+          const svg = exportToSVG(tree, childIndex, cam);
+          const baseName = (fileName ?? "neuron").replace(/\.swc$/i, "");
+          downloadSVG(svg, `neurotrace3d-${baseName}.svg`);
+        }}
+      />
+      <ToolButton
+        icon="VD"
+        label="Video Export"
+        onClick={() => window.dispatchEvent(new CustomEvent("open-video-modal"))}
+      />
+      <ToolButton
+        icon="PB"
+        label="Publication Export"
+        onClick={() => window.dispatchEvent(new CustomEvent("open-publication-modal"))}
       />
 
       <Divider />

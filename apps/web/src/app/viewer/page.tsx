@@ -19,6 +19,8 @@ import FeaturedNeurons from "@/components/neuromorpho/FeaturedNeurons";
 import Minimap from "@/components/viewer/Minimap";
 import ScaleBar from "@/components/viewer/ScaleBar";
 import StatusBar from "@/components/viewer/StatusBar";
+import VideoExportModal from "@/components/viewer/VideoExportModal";
+import PublicationExportModal from "@/components/viewer/PublicationExportModal";
 import { useNeuronStore } from "@/store/useNeuronStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
@@ -45,6 +47,8 @@ export default function ViewerPage() {
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
   const [sidebarTab, setSidebarTab] = useState<SidebarTab>("upload");
   const [loadingNeuron, setLoadingNeuron] = useState<string | null>(null);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [pubModalOpen, setPubModalOpen] = useState(false);
 
   const handleLoadNeuron = useCallback(async (name: string) => {
     setLoadingNeuron(name);
@@ -219,6 +223,18 @@ export default function ViewerPage() {
     return () => window.removeEventListener("neuron-context-menu", handler);
   }, []);
 
+  // Listen for modal open events from toolbar
+  useEffect(() => {
+    const openVideo = () => setVideoModalOpen(true);
+    const openPub = () => setPubModalOpen(true);
+    window.addEventListener("open-video-modal", openVideo);
+    window.addEventListener("open-publication-modal", openPub);
+    return () => {
+      window.removeEventListener("open-video-modal", openVideo);
+      window.removeEventListener("open-publication-modal", openPub);
+    };
+  }, []);
+
   if (!hasData) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-8 p-8">
@@ -288,6 +304,8 @@ export default function ViewerPage() {
           onClose={() => setContextMenu(null)}
         />
       )}
+      <VideoExportModal open={videoModalOpen} onClose={() => setVideoModalOpen(false)} />
+      <PublicationExportModal open={pubModalOpen} onClose={() => setPubModalOpen(false)} />
     </>
   );
 }

@@ -7,6 +7,7 @@ import NeuronRenderer from "./NeuronRenderer";
 import CameraControls from "./CameraControls";
 import NodeDragger from "./NodeDragger";
 import ScreenshotHelper from "./ScreenshotHelper";
+import VideoRecorder from "./VideoRecorder";
 import MeasurementOverlay from "./MeasurementOverlay";
 import ShollSpheres from "./ShollSpheres";
 import BoxSelector from "./BoxSelector";
@@ -53,6 +54,7 @@ export default function NeuronCanvas() {
 
       <CameraControls />
       <ScreenshotHelper />
+      <VideoRecorder />
       {hasNodes && <NeuronRenderer />}
       {hasNodes && activeTool === "move" && <NodeDragger />}
       {hasNodes && activeTool === "box-select" && <BoxSelector />}
