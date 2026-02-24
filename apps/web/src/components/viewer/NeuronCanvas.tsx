@@ -13,6 +13,8 @@ import ShollSpheres from "./ShollSpheres";
 import BoxSelector from "./BoxSelector";
 import BranchExtender from "./BranchExtender";
 import GhostNode from "./GhostNode";
+import ImagePlane from "./ImagePlane";
+import { useImageStore } from "@/store/useImageStore";
 
 const TOOL_CURSORS: Record<string, string> = {
   select: "default",
@@ -31,6 +33,8 @@ export default function NeuronCanvas() {
   const activeTool = useNeuronStore((s) => s.activeTool);
   const clearHover = useNeuronStore((s) => s.setHovered);
   const postProcessing = useNeuronStore((s) => s.postProcessing);
+  const imageLoaded = useImageStore((s) => s.sliceCount > 0);
+  const imageVisible = useImageStore((s) => s.visible);
 
   return (
     <Canvas
@@ -62,6 +66,7 @@ export default function NeuronCanvas() {
       {hasNodes && <MeasurementOverlay />}
       {hasNodes && <ShollSpheres />}
       {hasNodes && (activeTool === "insert" || activeTool === "extend") && <GhostNode />}
+      {imageLoaded && imageVisible && <ImagePlane />}
 
       {/* Post-processing: off / low (Bloom+SMAA) / high (SSAO+Bloom+SMAA) */}
       {postProcessing === "low" && (
