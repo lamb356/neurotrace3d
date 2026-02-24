@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback } from "react";
 import { useNeuronStore } from "@/store/useNeuronStore";
+import { isSupportedFile } from "@/lib/parsers";
 
 export default function FileUpload() {
   const loadFile = useNeuronStore((s) => s.loadFile);
@@ -13,7 +14,7 @@ export default function FileUpload() {
 
   const handleFile = useCallback(
     (file: File) => {
-      if (file.name.endsWith(".swc")) {
+      if (isSupportedFile(file.name)) {
         loadFile(file);
       }
     },
@@ -48,7 +49,7 @@ export default function FileUpload() {
       <input
         ref={inputRef}
         type="file"
-        accept=".swc"
+        accept=".swc,.asc,.json"
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
@@ -63,7 +64,7 @@ export default function FileUpload() {
           <span className="text-text-muted ml-2">&mdash; drop another to replace</span>
         </p>
       ) : (
-        <p className="text-text-muted text-sm">Drop .swc file or click to browse</p>
+        <p className="text-text-muted text-sm">Drop neuron file (.swc, .asc, .json) or click</p>
       )}
     </div>
   );

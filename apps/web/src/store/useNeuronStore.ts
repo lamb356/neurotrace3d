@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { enableMapSet } from "immer";
-import { parseSWC, computeStats, validateSWC } from "@neurotrace/swc-parser";
+import { parseNeuronFile, computeStats, validateSWC } from "@/lib/parsers";
 import type { NeuronStore } from "./types";
 import { recomputeDerived } from "./derived";
 import { applyOpsToTree, invertOps } from "./operations";
@@ -57,7 +57,7 @@ export const useNeuronStore = create<NeuronStore>()(
     loadSWC(content: string, fileName: string) {
       set((state) => {
         try {
-          const result = parseSWC(content);
+          const result = parseNeuronFile(fileName, content);
           const stats = computeStats(result);
           const validationWarnings = validateSWC(result);
 

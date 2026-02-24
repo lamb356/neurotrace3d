@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { parseSWC, computeStats } from "@neurotrace/swc-parser";
+import { parseNeuronFile, computeStats } from "@/lib/parsers";
 import type { MorphometricsResult } from "@/lib/morphometrics-types";
 
 export interface BatchResult {
@@ -77,7 +77,7 @@ export function useBatchAnalysis() {
 
           try {
             const text = await task.file.text();
-            const parsed = parseSWC(text);
+            const parsed = parseNeuronFile(task.file.name, text);
             const stats = computeStats(parsed);
 
             // Post to worker for advanced metrics

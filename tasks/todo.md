@@ -1,26 +1,20 @@
-# Visual & UX Overhaul
+# Multi-Format Import — SWC-JSON, Neurolucida ASC, Unified Parser
 
-## Phase 1: Rendering Overhaul
-- [x] Install `@react-three/postprocessing` + `postprocessing`
-- [x] `globals.css` — update dark theme CSS vars + add `.numeric` class
-- [x] `lib/colors.ts` — update TYPE_COLORS + DEFAULT_COLOR (desaturated palette)
-- [x] `NeuronRenderer.tsx` — instanced cylinders, taper shader, sphere upgrade (16x12), junction radius matching, shared MeshPhysicalMaterial, LOD system
-- [x] `NeuronCanvas.tsx` — new lighting (ambient + 2x directional + hemisphere), fog, post-processing (SSAO/Bloom/SMAA), disable antialias
-- [x] Typecheck + build → zero errors
+## Feature 1: SWC-JSON Parser
+- [ ] Create `lib/parsers/swcJson.ts` — JSON node-array parser with field normalization
+- [ ] Typecheck → commit
 
-## Phase 2: UI Professional Polish
-- [x] `lib/morphometrics.ts` — getBranchOrder, getPathToSoma
-- [x] `StatusBar.tsx` — 24px footer with node/segment/selection counts + hover info
-- [x] `NodeInfoPanel.tsx` — scientific panel with type badge, position, topology, morphometrics
-- [x] `NeuronCanvas.tsx` — tool cursors + GhostNode mount
-- [x] `GhostNode.tsx` — translucent cyan mouse-follow sphere for insert/extend
-- [x] `Toolbar.tsx` — vertical 48px icon rail with tooltips
-- [x] `ViewerContainer.tsx` — new layout (vertical toolbar + status bar + canvas)
-- [x] `MeasurementOverlay.tsx` — upgraded colors (#ffd700), navy theme labels
-- [x] `ScaleBar.tsx` — ortho-mode scale bar with auto-snap values
-- [x] Applied `.numeric` class across MeasurementsPanel, StatsPanel, NodeInfoPanel, StatusBar
-- [x] Typecheck + build → zero errors
+## Feature 2: Neurolucida ASC Parser
+- [ ] Create `lib/parsers/neurolucidaAsc.ts` — tokenizer + recursive descent parser
+- [ ] Typecheck → commit
+
+## Feature 3: Unified Parser + Integration
+- [ ] Create `lib/parsers/index.ts` — parseNeuronFile + isSupportedFile
+- [ ] Update `useNeuronStore.ts` — use parseNeuronFile instead of parseSWC
+- [ ] Update `useBatchAnalysis.ts` — use parseNeuronFile instead of parseSWC
+- [ ] Update `FileUpload.tsx` — accept .swc,.asc,.json + updated labels
+- [ ] Update `BatchDropZone.tsx` — accept .swc,.asc,.json + updated labels
+- [ ] Typecheck + build → commit
 
 ## Finalize
-- [ ] Commit
 - [ ] Push

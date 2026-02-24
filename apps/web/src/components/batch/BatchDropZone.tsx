@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { isSupportedFile } from "@/lib/parsers";
 
 interface BatchDropZoneProps {
   onFiles: (files: File[]) => void;
@@ -22,14 +23,14 @@ export default function BatchDropZone({ onFiles, disabled }: BatchDropZoneProps)
         for (const item of Array.from(e.dataTransfer.items)) {
           if (item.kind === "file") {
             const file = item.getAsFile();
-            if (file && file.name.toLowerCase().endsWith(".swc")) {
+            if (file && isSupportedFile(file.name)) {
               files.push(file);
             }
           }
         }
       } else {
         for (const file of Array.from(e.dataTransfer.files)) {
-          if (file.name.toLowerCase().endsWith(".swc")) {
+          if (isSupportedFile(file.name)) {
             files.push(file);
           }
         }
@@ -82,7 +83,7 @@ export default function BatchDropZone({ onFiles, disabled }: BatchDropZoneProps)
         />
       </svg>
       <p className="text-text-muted text-sm font-medium">
-        Drop SWC files here
+        Drop neuron files (.swc, .asc, .json)
       </p>
       <p className="text-text-muted mt-1 text-xs">
         or click to select files
@@ -90,7 +91,7 @@ export default function BatchDropZone({ onFiles, disabled }: BatchDropZoneProps)
       <input
         ref={inputRef}
         type="file"
-        accept=".swc"
+        accept=".swc,.asc,.json"
         multiple
         className="hidden"
         onChange={handleFileInput}
