@@ -21,7 +21,9 @@ import ScaleBar from "@/components/viewer/ScaleBar";
 import StatusBar from "@/components/viewer/StatusBar";
 import VideoExportModal from "@/components/viewer/VideoExportModal";
 import PublicationExportModal from "@/components/viewer/PublicationExportModal";
+import ImageControlsPanel from "@/components/panels/ImageControlsPanel";
 import { useNeuronStore } from "@/store/useNeuronStore";
+import { useImageStore } from "@/store/useImageStore";
 
 const NeuronCanvas = dynamic(() => import("@/components/viewer/NeuronCanvas"), {
   ssr: false,
@@ -150,6 +152,25 @@ export default function ViewerPage() {
         }
         if (key === "4") {
           useNeuronStore.getState().setCameraMode("ortho-yz");
+          return;
+        }
+      }
+
+      // Z-stack navigation: Ctrl+Arrow Up/Down, PageUp/PageDown
+      if (useImageStore.getState().sliceCount > 0) {
+        if ((e.key === "ArrowUp" || e.key === "ArrowDown") && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault();
+          useImageStore.getState().stepZ(e.key === "ArrowUp" ? -1 : 1);
+          return;
+        }
+        if (e.key === "PageUp") {
+          e.preventDefault();
+          useImageStore.getState().stepZ(-10);
+          return;
+        }
+        if (e.key === "PageDown") {
+          e.preventDefault();
+          useImageStore.getState().stepZ(10);
           return;
         }
       }
@@ -292,6 +313,7 @@ export default function ViewerPage() {
             <MeasurementsPanel />
             <ShollPanel />
             <DendrogramPanel />
+            <ImageControlsPanel />
             <WarningsPanel />
           </>
         }

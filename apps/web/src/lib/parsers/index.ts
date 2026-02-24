@@ -23,5 +23,13 @@ export function parseNeuronFile(fileName: string, content: string): SWCParseResu
   throw new Error(`Unsupported format: ${fileName}. Supported: .swc, .json, .asc`);
 }
 
+const IMAGE_EXTENSIONS = [".tif", ".tiff"];
+
+/** Check if a file name is a supported image format (TIFF stack) */
+export function isImageFile(fileName: string): boolean {
+  const lower = fileName.toLowerCase();
+  return IMAGE_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}
+
 // Re-export for convenience
 export { computeStats, validateSWC };

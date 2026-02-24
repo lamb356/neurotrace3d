@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import { useNeuronStore } from "@/store/useNeuronStore";
+import { useImageStore } from "@/store/useImageStore";
 import { exportSWC } from "@/lib/exportSWC";
 import { exportToSVG, downloadSVG } from "@/lib/svgExport";
 import { mainCameraRef } from "@/lib/mainCameraRef";
@@ -76,6 +78,8 @@ export default function Toolbar() {
   const cameraMode = useNeuronStore((s) => s.cameraMode);
   const showMinimap = useNeuronStore((s) => s.showMinimap);
   const postProcessing = useNeuronStore((s) => s.postProcessing);
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleUndo = () => useNeuronStore.getState().undo();
   const handleRedo = () => useNeuronStore.getState().redo();
@@ -157,6 +161,22 @@ export default function Toolbar() {
         icon="PB"
         label="Publication Export"
         onClick={() => window.dispatchEvent(new CustomEvent("open-publication-modal"))}
+      />
+      <ToolButton
+        icon="IM"
+        label="Load Image Overlay"
+        onClick={() => imageInputRef.current?.click()}
+      />
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept=".tif,.tiff"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) useImageStore.getState().loadTiff(file);
+          e.target.value = "";
+        }}
       />
 
       <Divider />
